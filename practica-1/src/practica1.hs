@@ -87,4 +87,20 @@ flip f x y = f y x
 flip1 flip2 x y z = flip2 y x z = y z x
 -}
 
+-- # Ejercicio 2
 
+-- ## i
+
+curry :: ((a, b) -> c) -> a -> b -> c
+curry f x y = f (x, y)
+
+-- ii
+
+uncurry :: (a -> b -> c) -> (a, b) -> c
+uncurry f (x, y) = f x y
+
+-- iii
+
+curryN :: (a -> c) -> a -> c
+
+curryN
