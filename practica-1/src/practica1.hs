@@ -73,8 +73,7 @@ Ambos se reemplazan en a2 y b2 respectivamente para obtener el tipado de flipAll
 
 Ya se encuentra curryficada y la funcion recibe una lista de funciones binarias (2 argumentos entrada)
 y devueve la lista de funciones con sus argumentos invertidos.
--}
--- ## h
+-}-- ## h
 
 flipRaro :: b -> (a -> b -> c) -> (a -> c)
 flipRaro = flip flip
@@ -122,3 +121,23 @@ if esMultiploDe10 29 then [] else 29 : (takeHastaMultiploDe10 (listaDesde (29+1)
 
 paresDeNat :: [(Int, Int)]
 paresDeNat = [(x, y) | x <- [0 ..], y <- [0 .. x]]
+
+-- # Ejercicio 5
+
+{-
+pitagóricas :: [(Integer, Integer, Integer)]
+pitagóricas = [(a, b, c) | a <- [1..], b <-[1..], c <- [1..], a^2 + b^2 == c^2]
+Esta definicion no es util ya que solo se recorrera un valor de a y b (el 1) e infinitos para el c. Por lo que el recorrido
+no encontrará las triplas pitagoricas.
+[(1,1,1),(1,1,2),(1,1,3),(1,1,4),(1,1,5)...]
+
+Se esta rompiendo la primer regla de usar un solo generador infinito.
+-}
+
+pitagóricas :: [(Integer, Integer, Integer)]
+pitagóricas = [(a, b, c) | c <- [1 ..], b <- [1 .. c], a <- [1 .. b], a ^ (2 :: Int) + b ^ (2 :: Int) == c ^ (2 :: Int)]
+
+{-
+Notar que hay un solo generador infinito y corresponde a c. Luego a y b toman valores menores que c, ya que se tiene
+la restriccion de que a^+ b^2 = c^2 que implica que c >= b >= a
+-}
