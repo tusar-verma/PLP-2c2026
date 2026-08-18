@@ -101,6 +101,24 @@ uncurry f (x, y) = f x y
 
 -- iii
 
-curryN :: (a -> c) -> a -> c
+-- creo que haria falta usar recursion para que funcione con cualquier n.
 
-curryN
+-- # Ejercicio 3
+
+{-
+Basicamente lazy evaluation para listaDesde
+
+takeHastaMultiploDe10 (listaDesde 29)
+takeHastaMultiploDe10 (29 : listaDesde (29+1))          -- Ahora se hace pattern matching con (x:xs) de takeHastaMultiploDe10
+if esMultiploDe10 29 then [] else 29 : (takeHastaMultiploDe10 (listaDesde (29+1)))   -- Se evalua el if (condicion es falsa)
+29 : (takeHastaMultiploDe10 (listaDesde (29+1)))        -- nuevamente se evalua el listar desde
+29 : (takeHastaMultiploDe10 (30 : listaDesde (30+1)))   -- y nuevamente se hace pattern matching con el caso (x:xs)
+29 : (if esMultiploDe10 30 then [] else 30 : (takeHastaMultiploDe10 (listaDesde (30+1))))     -- Ahora se toma la rama true
+29 : []
+[29]
+-}
+
+-- # Ejercicio 4
+
+paresDeNat :: [(Int, Int)]
+paresDeNat = [(x, y) | x <- [0 ..], y <- [0 .. x]]
