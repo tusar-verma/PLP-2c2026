@@ -73,7 +73,8 @@ Ambos se reemplazan en a2 y b2 respectivamente para obtener el tipado de flipAll
 
 Ya se encuentra curryficada y la funcion recibe una lista de funciones binarias (2 argumentos entrada)
 y devueve la lista de funciones con sus argumentos invertidos.
--}-- ## h
+-}
+-- ## h
 
 flipRaro :: b -> (a -> b -> c) -> (a -> c)
 flipRaro = flip flip
@@ -141,3 +142,39 @@ pitagóricas = [(a, b, c) | c <- [1 ..], b <- [1 .. c], a <- [1 .. b], a ^ (2 ::
 Notar que hay un solo generador infinito y corresponde a c. Luego a y b toman valores menores que c, ya que se tiene
 la restriccion de que a^+ b^2 = c^2 que implica que c >= b >= a
 -}
+
+-- # Ejercicio 6
+
+-- Idea: recorremos los numeros de 1 a n (sea x el indice del recorrido). Por cada valor de x armo listas que sumen (n-x),
+-- luego agrego x y dicho conjunto de listas pasan a sumar n. Asi para cada valor de x.
+
+listasQueSuman :: Int -> [[Int]]
+listasQueSuman 0 = [[]]
+listasQueSuman n = agregarListasSuman n n
+
+agregarListasSuman :: Int -> Int -> [[Int]]
+agregarListasSuman _ 0 = []
+agregarListasSuman n x = map (\y -> x : y) (listasQueSuman (n - x)) ++ agregarListasSuman n (x - 1)
+
+listasQueSuman' :: Int -> [[Int]]
+listasQueSuman' 0 = [[]]
+listasQueSuman' n = [x : xs | x <- [1 .. n], xs <- listasQueSuman' (n - x)]
+
+-- Por ultimo no es recursion estructural al no estar haciendo recursión sobre la estructura de la lista. Se hace sobre los enteros n y x.
+
+-- # Ejercicio 7
+
+listaInfinitaDeListas :: [[Int]]
+listaInfinitaDeListas = juntarTodasLasListas 0
+
+juntarTodasLasListas :: Int -> [[Int]]
+juntarTodasLasListas n = listasQueSuman n ++ juntarTodasLasListas (n + 1)
+
+{-
+concatMap :: Foldable t => (a -> [b]) -> t a -> [b]
+
+Aplica cierta funcion a cada elemento de la lista y concatena los resultados (dicha función devuelve una lista.
+Por lo que se concatena cada lista generada por la función evaluada en cada elemento).
+-}
+listaInfinitaDeListas' :: [[Int]]
+listaInfinitaDeListas' = concatMap listasQueSuman [1 ..]
