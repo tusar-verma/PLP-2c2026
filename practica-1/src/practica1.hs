@@ -178,3 +178,59 @@ Por lo que se concatena cada lista generada por la función evaluada en cada ele
 -}
 listaInfinitaDeListas' :: [[Int]]
 listaInfinitaDeListas' = concatMap listasQueSuman [1 ..]
+
+-- # Ejercicio 8
+
+-- ## I
+
+-- ### a
+
+filtroPalabrasTamañoMenor5 :: [String] -> [String]
+filtroPalabrasTamañoMenor5 xs = filter (\x -> length x < 5) xs
+
+-- ### b
+
+notasAprobadas :: [Int] -> [Bool]
+notasAprobadas xs = map (\x -> x >= 6) xs
+
+-- ### c
+
+elementosParesAlCuadrado :: [Int] -> [Int]
+elementosParesAlCuadrado xs = map (\x -> x ^ (2 :: Integer)) (filter (\x -> mod x 2 == 0) xs)
+
+-- ## II
+{-
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr f z []     = z
+foldr f z (x:xs) = f x (foldr f z xs)
+-}
+
+sum' :: (Num a) => [a] -> a
+sum' xs = foldr (\x acc -> (x + acc)) 0 xs
+
+elem' :: (Eq a) => [a] -> a -> Bool
+elem' xs e = foldr (\x acc -> x == e || acc) False xs
+
+plusplus :: [a] -> [a] -> [a]
+plusplus xs ys = foldr (\x acc -> x : acc) ys xs
+
+filter' :: (a -> Bool) -> [a] -> [a]
+filter' f xs = foldr (\x acc -> if f x then x : acc else acc) [] xs
+
+map' :: (a -> b) -> [a] -> [b]
+map' f xs = foldr (\x acc -> f x : acc) [] xs
+
+-- ## III
+mejorSegun :: (a -> a -> Bool) -> [a] -> a
+mejorSegun _ [] = (error "Lista debe ser no vacia")
+mejorSegun f (x : xs) = foldr (\a acc -> if (f a acc) then a else acc) x xs
+
+-- ## IV
+sumasParciales :: Num a => [a] -> [a]
+sumasParciales 
+
+-- ## V
+
+-- ## VI
+
+-- ## VII
