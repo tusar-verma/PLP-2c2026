@@ -303,3 +303,56 @@ Supongo que se deben aplicar desde el ultimo elemento al primero f(g(h(x))) = [f
 
 componerTodas :: [a -> a] -> a -> a
 componerTodas xs = foldr (\x acc -> x . acc) id xs
+
+-- # Ejercicio 9
+
+-- ## I
+{-
+Permutacion se hace recursivamente: dado una lista [a,b,c...], si se tiene las permutaciones de los elementos [b,c,...]
+se puede calcular las permutaciones de [a,b,c...] como agregar "a" en las permutaciones de [b,c,...]. Por cada permutación p_i de [b,c,...]
+se debe insertar "a" una vez alguna posición posible para formar una de las permutaciones de [a,b,c,...]
+
+Por ejemplo [a,b,c]
+
+Suponiendo que se tiene las permutaciones de [b,c] = [[b,c], [c,b]]
+
+Tomamos una de ella e insertamos "a" en cada posición posible:
+
+- [b,c] --> [a,b,c], [b,a,c], [b,c,a]
+
+Y asi con todas las demás permutaciones de [b,c]:
+
+- [c,b] --> [a,c,b], [c,a,b], [c,b,a]
+
+Y juntamos todo.
+
+La función permutaciones se encarga de la recursion para la permutación de la lista mas pequeña (recorrido hacia derecha)
+La función insertarEnPermutaciones se encarga de iniciar la recursión que inserta el elemento nuevo en las permutaciones del paso recursivo.
+La función insertarEnPermutacionesAux se encarga de hacer la recursión para generar las listas de permutaciones con el elemento en cada posición posible
+
+-}
+permutaciones :: [a] -> [[a]]
+permutaciones [] = [[]]
+permutaciones (x : xs) = insertarEnPermutaciones x (permutaciones xs)
+
+insertarEnPermutaciones :: a -> [[a]] -> [[a]]
+insertarEnPermutaciones elemento listaPermutaciones = concatMap (\permutacion -> insertarEnPermutacionesAux elemento (length (permutacion)) permutacion) listaPermutaciones
+
+insertarEnPermutacionesAux :: a -> Int -> [a] -> [[a]]
+insertarEnPermutacionesAux elemento 0 xs = [elemento : xs]
+insertarEnPermutacionesAux elemento n xs = ((take n xs) ++ (elemento : (drop n xs))) : (insertarEnPermutacionesAux elemento (n - 1) xs)
+
+permutaciones' :: [a] -> [[a]]
+permutaciones' xs = foldr (\x acc -> insertarEnPermutaciones x acc) [[]] xs
+
+-- ## II
+
+partes :: [a] -> [[a]]
+partes xs = foldr (\x acc -> concatMap (\ys -> [ys, x : ys]) acc) [[]] xs
+
+-- ## III
+
+prefijos :: [a] -> [[a]]
+prefijos xs = foldl (\acc x -> acc ++ [last (acc) ++ [x]]) [[]] xs
+
+-- ### Ejercicio 10
