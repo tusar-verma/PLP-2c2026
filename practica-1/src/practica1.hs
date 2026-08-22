@@ -203,6 +203,10 @@ elementosParesAlCuadrado xs = map (\x -> x ^ (2 :: Integer)) (filter (\x -> mod 
 foldr :: (a -> b -> b) -> b -> [a] -> b
 foldr f z []     = z
 foldr f z (x:xs) = f x (foldr f z xs)
+
+foldl :: (b -> a -> b) -> b -> [a] -> b
+foldl f v []     = v
+foldl f v (x:xs) = foldl f (f v x) xs
 -}
 
 sum' :: (Num a) => [a] -> a
@@ -226,11 +230,76 @@ mejorSegun _ [] = (error "Lista debe ser no vacia")
 mejorSegun f (x : xs) = foldr (\a acc -> if (f a acc) then a else acc) x xs
 
 -- ## IV
-sumasParciales :: Num a => [a] -> [a]
-sumasParciales 
+
+-- Solución sin foldl para ayudarme a pensar
+sumasParciales' :: (Num a) => [a] -> [a]
+sumasParciales' xs = sumaParcialesAux xs 0
+
+sumaParcialesAux :: (Num a) => [a] -> a -> [a]
+sumaParcialesAux [] n = [n]
+sumaParcialesAux (x : xs) n = (n + x) : sumaParcialesAux xs (n + x)
+
+sumasParciales :: (Num a) => [a] -> [a]
+sumasParciales [] = [0]
+sumasParciales (x : xs) = foldl (\acc y -> (acc ++ [last (acc) + y])) [x] xs
 
 -- ## V
 
+{-
+La recursión de foldr permite hacer la suma alternada por como agrupa las operaciones
+
+foldr f z []     = z
+foldr f z (x:xs) = f x (foldr f z xs)
+
+suponiendo A = [a,b,c,d] una lista de 4 elementos
+
+foldr f z A = f a (foldr f z [b, c, d]) = f a (f b (foldr z [c, d])) = f a (f b (f c (foldr f z [d]))) = f a (f b (f c (f d (foldr f z []))))
+            = f a (f b (f c (f d (z))))
+
+si f :: (a -> b -> b) le pasamos la función resta y z = 0, queda
+
+(-) a ((-) b ((-) c ((-) d (0)))) = a - (b - (c - (d - (0)))))
+
+Desarollando esta agrupación de operaciones:
+
+a - (b - (c - (d - (0))))) = a - (b - (c - (d)))) = a - (b - (c - d))) = a - (b - c + d)) = a - b + c - d
+
+Este argumento se puede explicar como que: elem - (recursion), el "-" hace que se intercambien todos los signos en la (recursion)
+
+-}
+
+sumaAlt :: (Num a) => [a] -> a
+sumaAlt = foldr (-) 0
+
+-- o tambien:  sumaAlt xs = foldr (-) 0 xs
+
 -- ## VI
+{-
+
+foldl f z []     =z
+foldl f z (x:xs) = foldl f (f z x) xs
+
+A = [a, b, c, d]
+
+foldl f z [a, b, c, d] = foldl f (f z a) [b, c, d] = foldl f (f z a) [b, c, d] = foldl f (f (f z a) b) [c d] = foldl f (f (f (f z a) b) c) [d] = foldl f (f (f (f (f z a) b) c) d) []
+                       = f (f (f (f z a) b) c) d
+
+el argumento es similar pero recorremos de izq a derecha. En el ultimo paso de la recursión tenemos el ultimo elemento y la suma acumulada de la recursión.
+Hacemos la operación -(recursion) + elem para invertir la suma acumulada hasta ahora y sumar el elemento actual.
+
+Notar que cada paso recursivo hace lo mismo, por lo que efectivamente se hace una suma alternada, y como el ultimo paso suma el ultimo elemento de la lista y con signo positivo
+entonces logramos hacer el ultima - anteultima + antepenultimo ...
+
+-}
+
+sumaAltInverso :: (Num a) => [a] -> a
+sumaAltInverso xs = foldl (\acc x -> -(acc) + x) 0 xs
 
 -- ## VII
+
+{-
+Supongo que se deben aplicar desde el ultimo elemento al primero f(g(h(x))) = [f, g, h]
+-}
+
+componerTodas :: [a -> a] -> a -> a
+componerTodas xs = foldr (\x acc -> x . acc) id xs
