@@ -16,7 +16,6 @@ max2curry :: Float -> Float -> Float
 max2curry x y = max2 (x, y)
 
 -- ## b
-
 normaVectorial :: (Float, Float) -> Float
 normaVectorial (x, y) = sqrt (x ** 2 + y ** 2)
 
@@ -276,7 +275,7 @@ sumaAlt = foldr (-) 0
 -- ## VI
 {-
 
-foldl f z []     =z
+foldl f z []     = z
 foldl f z (x:xs) = foldl f (f z x) xs
 
 A = [a, b, c, d]
@@ -356,3 +355,63 @@ prefijos :: [a] -> [[a]]
 prefijos xs = foldl (\acc x -> acc ++ [last (acc) ++ [x]]) [[]] xs
 
 -- ### Ejercicio 10
+
+recr :: (a -> [a] -> b -> b) -> b -> [a] -> b
+recr _ z [] = z
+recr f z (x : xs) = f x xs (recr f z xs)
+
+-- ## a
+
+sacarUna :: (Eq a) => a -> [a] -> [a]
+sacarUna _ [] = []
+sacarUna e xs = recr (\y ys acc -> if (y == e) then ys else y : acc) [] xs
+
+-- ## b
+
+{-
+Por que al no tener disponible ys (la lista total en el paso recursivo actual) no podemos cortar la recursión
+al encontrar la primer aparición del elemento.
+-}
+
+-- ## c
+
+-- precondición: la lista de entrada ya esta ordenada de manera creciente
+insertarOrdenado :: (Ord a) => a -> [a] -> [a]
+insertarOrdenado e xs = recr (\y ys acc -> if (e < y) then e : [y] ++ ys else y : acc) [e] xs
+
+-- # Ejercicio 11
+
+{-
+Para que sea recursion estructural debe cumplir:
+
+1. Se define por 2 ecuaciones (caso base y caso recursivo)
+2. El caso base: no depende de nada (es un valor fijo)
+3. El caso recursivo usa x y el resultado de la llamada recursiva y nada mas (no puede usar g ni xs sueltas).
+
+g [] = ...
+g (x:xs) = ... x ... (g xs) ...
+
+Y recursion primitiva agrega poder usar la estructura en cada paso de la recursion.
+-}
+
+elementosEnPosicionesPares :: [a] -> [a]
+elementosEnPosicionesPares [] = []
+elementosEnPosicionesPares (x : xs) = if null xs then [x] else x : elementosEnPosicionesPares (tail xs)
+
+-- En este caso no es estructural ya que el caso recursivo usa xs y no el resultado de aplicar la función en xs
+-- (toma xs y se fija si no es null, ademas de usar la cola de xs)
+-- Tampoco es primitiva, necesita usar solo xs para el caso recursivo, pero se usa tail xs.
+-- Por lo que es recursion directa
+
+entrelazar :: [a] -> [a] -> [a]
+entrelazar [] = id
+entrelazar (x : xs) = \ys ->
+  if null ys
+    then x : entrelazar xs []
+    else x : head ys : entrelazar xs (tail ys)
+
+-- # Ejercicio 12
+
+-- # Ejercicio 14
+
+-- # Ejercicio 17
