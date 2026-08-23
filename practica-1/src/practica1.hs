@@ -354,7 +354,7 @@ partes xs = foldr (\x acc -> concatMap (\ys -> [ys, x : ys]) acc) [[]] xs
 prefijos :: [a] -> [[a]]
 prefijos xs = foldl (\acc x -> acc ++ [last (acc) ++ [x]]) [[]] xs
 
--- ### Ejercicio 10
+-- # Ejercicio 10
 
 recr :: (a -> [a] -> b -> b) -> b -> [a] -> b
 recr _ z [] = z
@@ -400,8 +400,6 @@ elementosEnPosicionesPares (x : xs) = if null xs then [x] else x : elementosEnPo
 
 -- En este caso no es estructural ya que el caso recursivo usa xs y no el resultado de aplicar la función en xs
 -- (toma xs y se fija si no es null, ademas de usar la cola de xs)
--- Tampoco es primitiva, necesita usar solo xs para el caso recursivo, pero se usa tail xs.
--- Por lo que es recursion directa
 
 entrelazar :: [a] -> [a] -> [a]
 entrelazar [] = id
@@ -409,6 +407,82 @@ entrelazar (x : xs) = \ys ->
   if null ys
     then x : entrelazar xs []
     else x : head ys : entrelazar xs (tail ys)
+
+{-
+Es estructural (y por lo tanto tambien primitivo).
+El caso base es un solo elemento. El caso recursivo se resuelve con recursion aplicada a xs (el resultado de entrelazar xs)
+que en este caso es una función.
+El caso recursivo entonces, usa la función recursiva devuelta por el caso recursivo en xs
+-}
+
+entrelazar' :: [a] -> [a] -> [a]
+entrelazar' = foldr (\x acc -> g x acc) id
+  where
+    g x acc = \ys ->
+      if null ys
+        then x : acc []
+        else x : head ys : acc (tail ys)
+
+entrelazar'' :: [a] -> [a] -> [a]
+entrelazar'' = recr f id
+  where
+    f x xs recursion = \ys ->
+      if null ys
+        then x : recursion []
+        else x : head ys : recursion (tail ys)
+
+slowSort :: (Ord a) => [a] -> [a]
+slowSort [] = []
+slowSort (p : xs) = slowSort menores ++ [p] ++ slowSort mayores
+  where
+    menores = [x | x <- xs, x <= p]
+    mayores = [x | x <- xs, x > p]
+
+{-
+No es estructural ni primitivo. En el caso recursivo no se usa slowSort xs directamente, sino que se usa xs para computar otras listas
+menores y mayores recursivamente. Es decir, hay 2 llamadas recursivas.
+
+Esto no se puede representar con recursion estructural ni primivita, que hacen una sola llamada recursiva
+y recorren la estructura siempre en el mismo orden.
+-}
+
+{-
+La siguiente funcion es parecida pero si es estructural ya que solo hace una llamada recursiva en el caso recursivo
+-}
+
+slowSortParecido :: (Ord a) => [a] -> [a]
+slowSortParecido = foldr (\e acc -> [x | x <- acc, x <= e] ++ [e] ++ [x | x <- acc, x > e]) []
+
+sufijos :: [a] -> [[a]]
+sufijos [] = [[]]
+sufijos (x : xs) = (x : xs) : sufijos xs
+
+{-
+No es estructural al usar xs en el paso recursivo.
+Es primitiva
+-}
+
+sufijos' :: [a] -> [[a]]
+sufijos' = recr (\x xs acc -> (x : xs) : acc) [[]]
+
+miScanr :: (a -> b -> b) -> b -> [a] -> [b]
+miScanr f n [] = [n]
+miScanr f n (x : xs) =
+  let (y : ys) = miScanr f n xs
+   in (f x y) : (y : ys)
+
+{-
+No se que hace la función pero es estructural: el caso base es un valor particular y el caso recursivo solo usa la llamada a la función recursiva en xs
+-}
+
+miScanr' :: (a -> b -> b) -> b -> [a] -> [b]
+miScanr' f n =
+  foldr
+    ( \x acc ->
+        let (y : ys) = acc
+         in (f x y) : (y : ys)
+    )
+    [n]
 
 -- # Ejercicio 12
 
