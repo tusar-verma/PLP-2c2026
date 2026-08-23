@@ -243,7 +243,6 @@ sumasParciales [] = [0]
 sumasParciales (x : xs) = foldl (\acc y -> (acc ++ [last (acc) + y])) [x] xs
 
 -- ## V
-
 {-
 La recursión de foldr permite hacer la suma alternada por como agrupa las operaciones
 
@@ -486,6 +485,50 @@ miScanr' f n =
 
 -- # Ejercicio 12
 
+-- ## I
+
+mapPares :: (a -> b -> c) -> [(a, b)] -> [c]
+mapPares f = map (\(x1, x2) -> f x1 x2)
+
+mapPares' :: (a -> b -> c) -> [(a, b)] -> [c]
+-- mapPares' f = map (\x -> Practica1.uncurry f x)
+mapPares' f = map (Practica1.uncurry f)
+
+-- ## II
+
+armarPares :: [a] -> [b] -> [(a, b)]
+armarPares _ [] = []
+armarPares [] _ = []
+armarPares (x : xs) (y : ys) = (x, y) : armarPares xs ys
+
+-- ## III
+
+mapDoble :: (a -> b -> c) -> [a] -> [b] -> [c]
+mapDoble f xs ys = mapPares f (armarPares xs ys)
+
 -- # Ejercicio 14
 
+-- ## I
+
+foldNat :: (Int -> b -> b) -> b -> Int -> b
+foldNat _ n 0 = n
+foldNat f n x = f x (foldNat f n (x - 1))
+
+-- ## II
+
+potencia :: Int -> Int -> Int
+potencia a = foldNat (\_ acc -> a * acc) 1
+
 -- # Ejercicio 17
+
+data AB a = Nil | Bin (AB a) a (AB a)
+
+-- ## I
+
+-- ## II
+
+-- ## III
+
+-- ## VI
+
+-- ## V
