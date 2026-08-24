@@ -525,10 +525,78 @@ data AB a = Nil | Bin (AB a) a (AB a)
 
 -- ## I
 
+-- La funcion del primer parametro recibe por parametro el nodo actual, el resultado de la recursion del sub-arbol izq y el del sub arbol derecho
+foldAB :: (a -> b -> b -> b) -> b -> AB a -> b
+foldAB _ z Nil = z
+foldAB f z (Bin x1 x2 x3) = f x2 (foldAB f z x1) (foldAB f z x3)
+
+-- otra forma usando pattern matching con t
+
+foldAB' :: (a -> b -> b -> b) -> b -> AB a -> b
+foldAB' casoBin casoNil t =
+  case t of
+    Nil -> casoNil
+    Bin i r d -> casoBin r (foldAB' casoBin casoNil i) (foldAB' casoBin casoNil d)
+
+recAB :: (a -> b -> b -> AB a -> AB a -> b) -> b -> AB a -> b
+recAB _ casoNil Nil = casoNil
+recAB casoBin casoNil (Bin i r d) = casoBin r (recAB casoBin casoNil i) (recAB casoBin casoNil d) i d
+
 -- ## II
+
+esNil :: AB a -> Bool
+esNil Nil = True
+esNil _ = False
+
+altura :: AB a -> Int
+altura arbolBin = foldAB (\_ i d -> 1 + max i d) 0 arbolBin
+
+cantNodos :: AB a -> Int
+cantNodos arbolBin = foldAB (\_ i d -> 1 + i + d) 0 arbolBin
 
 -- ## III
 
+mejorSegunAB :: (a -> a -> Bool) -> AB a -> a
+mejorSegunAB _ Nil = error ("No hay nodos para comparar")
+mejorSegunAB f (Bin i r d) = foldAB (g f) r (Bin i r d)
+  where
+    g :: (a -> a -> Bool) -> a -> a -> a -> a
+    g f' r' recIzq recDer =
+      if (f' r' recIzq && f' r' recDer)
+        then r'
+        else
+          if (f' recIzq r' && f' recIzq recDer)
+            then recIzq
+            else recDer
+
 -- ## VI
 
+esABB :: (Ord a) => AB a -> Bool
+esABB a = recAB g True a
+  where
+    g :: (Ord a) => a -> Bool -> Bool -> (AB a) -> (AB a) -> Bool
+    g r recIzq recDer abIzq abDer = recIzq && recDer && (esNil abIzq || (maxAB abIzq) <= r) && (esNil abDer || r <= (minAB abDer))
+
+maxAB :: (Ord a) => AB a -> a
+maxAB Nil = error ("No hay nodos para comparar")
+maxAB (Bin i r d) = foldAB (g) r (Bin i r d)
+  where
+    g :: (Ord a) => a -> a -> a -> a
+    g r' recIzq recDer = max r' (max recIzq recDer)
+
+minAB :: (Ord a) => AB a -> a
+minAB Nil = error ("No hay nodos para comparar")
+minAB (Bin i r d) = foldAB (g) r (Bin i r d)
+  where
+    g :: (Ord a) => a -> a -> a -> a
+    g r' recIzq recDer = min r' (min recIzq recDer)
+
 -- ## V
+
+{-
+altura, cantNodos, mejorSegunAB se uso foldAB al ser una recursion donde cada paso se usaba simplemente el resultado de la llamada recursiva de
+los subarboles izq y der.
+
+en esABB se uso recrAB por necesitar acceder a info de los subarboles izq y der además del resultado de sus llamados recursivos.
+Por otro lado maxAB y minAB si se uso foldAB (solo se necesita el resultado de la llamada recursiva de ambos subarboles)
+-}
