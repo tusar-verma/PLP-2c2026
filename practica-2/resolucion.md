@@ -131,3 +131,110 @@ otra forma
 {asoc a izq}     = uncurry f (x, y)
 (c1)             = f x y
 ```
+
+# Ejercicio 2
+
+Principio de extensionalidad funcional: 
+Sean $f, g :: a \leftarrow b$
+Si $(\forall x::a) \ f \ x = g \ x$ entocnes $f = g$
+
+## I
+
+```haskell
+{c} (g . f) x = g (f x)
+{f} flip f x y = f y x
+{id} id x = x
+
+```
+
+
+```haskell
+flip :: (a -> b -> c) -> b -> a -> c
+(.) :: (d -> e) -> (f -> g) -> f -> e
+(flip . flip) :: (b -> a -> c) -> (b -> a -> c)
+```
+
+renombrando las variables y (des)agrupando a derecha (por el operador ->) tenemos:
+```haskell
+(flip . flip) :: (a -> b -> c) -> (a -> b -> c)
+(flip . flip) :: (a -> b -> c) -> a -> b -> c
+```
+
+Aplicamos el principio de extensionalidad funcional. Basta ver que $\forall f::a \rightarrow b \rightarrow c \ \forall x::a \ \forall y::b$ se cumple la igualdad flip .flip f x y = id f x y
+
+
+```haskell
+        flip . flip f x y
+{c}   = flip (flip f x y)
+{f}   = flip f y x
+{f}   = f x y
+{id}  = id f x y
+
+```
+
+## II
+
+```haskell
+f :: (a,b) -> c
+curry :: ((a, b) -> c) -> a -> b -> c
+uncurry :: (a -> b -> c) -> (a, b) -> c
+
+uncurry (curry f) = f :: (a, b) -> c
+
+{c0} curry f x y = f (x,y)
+{c1} uncurry f (x,y) = f x y
+```
+
+
+Aplicamos el principio de extensionalidad funcional. Basta ver que $\forall p=(x,y)$ con $x\in a \wedge y \in b$ se cumple la igualdad $uncurry (curry f) (x,y) = f (x,y)$
+
+```haskell
+         uncurry (curry f) (x, y)
+{c1}   = curry f x y
+{c0}   = f (x, y)
+
+```
+
+## III
+
+flip const = const id
+
+```haskell
+flip :: (a -> b -> c) -> b -> a -> c
+const :: a -> b -> a
+
+flip const :: b -> a -> a
+
+{f} flip f x y = f y x
+{c} const x y = x
+{id} id x = x
+```
+
+Nuevamente usamos el principio de extensionalidad de funciones: $\forall x\in a, \forall y \in b$
+qvq flip const y x = const id y x 
+
+```haskell
+        flip const y x
+{f}   = const x y
+{c}   = x
+{id}  = id x
+{c}   = (const id y) x
+      = const id y x
+```
+
+## IV
+
+Usando principio de extensionalidad de funciones $\forall x \in a$ basta con probar que 
+((h . g) . f) x = (h . (g . f)) x
+
+```haskell
+{d} (.) f g x = f (g x)
+```
+
+```haskell
+                 ((h . g) . f) x
+{d}           = (h . g) (f x)
+{d}           = h (g (f x))
+{d}           = h (g . f) x
+{d}           = (h . (g . f)) x
+```
