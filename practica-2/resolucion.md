@@ -513,13 +513,105 @@ reverse (x:xs) = foldr (\y rec -> rec ++ (y:[])) [] (x:xs)
 
 ```
 
-
-
-
-
 ## II
 
+Usando inducción estructural sobre xs quermos ver que 
+
+```haskell
+∀ xs::[a] . ∀ ys::[a] . reverse (xs ++ ys) = reverse ys ++ reverse xs
+```
+
+> caso base ∀ ys::[a] P([], ys)
+
+```haskell
+-- qvq reverse ([] ++ ys) = reverse ys ++ reverse []
+
+  reverse ([] ++ ys)
+= reverse ys                      {++0}
+
+
+  reverse ys ++ reverse []
+= reverse ys ++ foldl (flip (:)) [] []         {R0}
+= reverse ys ++ []                             {R0}
+= foldl (flip (:)) [] ys ++ []                 {Lema 1, inciso I}
+= foldl (flip (:)) [] ys                       {R0}
+= reverse ys
+```
+
+> caso inductivo ∀ xs::[a] (∀ys::[a] P(xs, ys)) ⇒ (∀ ys::[a] P(x:xs, ys))
+
+```haskell
+--- HI: ∀ys::[a] reverse (xs ++ ys) = reverse ys ++ reverse xs
+
+--- qvq: ∀ys::[a] reverse ((x:xs) ++ ys) = reverse ys ++ reverse (x:xs)
+
+  reverse ((x:xs) ++ ys)                                  {++1}
+= reverse (x:(xs ++ ys))                                  {R0}
+= foldl (flip (:)) [] (x:(xs ++ ys))                      {FL1}
+= foldl (flip (:)) (flip (:) [] x) (xs ++ ys)             
+= foldl (flip (:)) [x] (xs ++ ys)                         {Lema 1, inciso I}
+= foldl (flip (:)) [] (xs ++ ys) ++ [x]                   {R0}
+= reverse (xs ++ ys) ++ [x]                               {HI}
+= reverse ys ++ reverse xs ++ [x]                         {R0}
+= reverse ys ++ foldl (flip (:)) [] xs ++ [x]             {Lema 1, inciso I}
+= reverse ys ++ foldl (flip (:)) [x] xs                   {FL1}
+= reverse ys ++ foldl (flip (:)) (flip (:) [] x) xs       {FL1}
+= reverse ys ++ foldl (flip (:)) [] (x:xs)                {R0}
+= reverse ys ++ reverse (x:xs)
+```
+
 ## III
+
+Usando lema de generación e inducción estructural sobre xs quermos ver que 
+
+```haskell
+∀ xs::[a]  ∀ y::a  reverse (xs ++ [y]) = y:reverse xs
+```
+
+> caso base P([])
+
+```haskell
+-- qvq: ∀ y::a  reverse ([] ++ [y]) = y:reverse []
+
+  reverse ([] ++ [y])                       {++0}
+= reverse [y]                               {R0, FL1, FL0}
+= [x]
+
+
+  x:reverse []
+= y:[]
+= [y]
+```
+
+> caso inductivo ∀ x::a ∀ xs::[a] (∀ y::a P(xs)) ⇒ (∀ y::a P(x:xs, ys))
+
+```haskell
+-- HI: reverse (xs ++ [y]) = y:reverse xs
+-- qvq: reverse ((x:xs) ++ [y]) = y:reverse (x:xs)
+
+  reverse ((x:xs) ++ [y])                                   {R0}
+= foldl (flip (:)) [] ((x:xs) ++ [y])                       {FL1}
+= foldl (flip (:)) (flip (:) [] x) (xs ++ [y])          
+= foldl (flip (:)) [x] (xs ++ [y])                          {lema 1, inciso I}
+= foldl (flip (:)) [] (xs ++ [y]) ++ [x]                    {R0}
+= reverse (xs ++ [y]) ++ [x]                                {HI}
+= y:reverse xs ++ [x]                                       {asociatividad de ++}
+= y:(reverse xs ++ [x])                                     {lema 2}
+= y:(reverse (x:xs))
+```
+
+> lema 2
+```haskell
+-- reverse xs ++ [x] = (reverse xs ++ [x]) 
+
+  reverse xs ++ [x]                         {R0}
+= foldl (flip (:)) [] xs ++ [x]             {Lema 1, inciso I}
+= foldl (flip (:)) [x] xs                   {FL1}
+= foldl (flip (:)) (flip (:) [] x) xs       {FL1}
+= foldl (flip (:)) [] (x:xs)                {R0}
+= reverse (x:xs)
+
+```
 
 # Ejercicio 6
 
