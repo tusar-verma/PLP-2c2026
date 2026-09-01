@@ -238,3 +238,296 @@ Usando principio de extensionalidad de funciones $\forall x \in a$ basta con pro
 {d}           = h (g . f) x
 {d}           = (h . (g . f)) x
 ```
+
+# Ejercicio 3
+
+![](img/definiciones.png)
+
+## I
+
+$P(xs) \equiv \forall xs::[a]$ length (duplicar xs) = 2 * length xs
+
+Por inducción estructural en xs basta ver que la propiedad se cumple en sus constructores:
+
+> caso base $P([])$
+
+```haskell
+  length (duplicar [])  
+= length ([])                   {D0}
+= 0                             {L0}
+
+  2 * length []
+= 2 * 0                         {L0}
+= 0
+```
+
+Al desarrollar ambos las de la ecuación obtenemos el mismo resultado. Probando que vale la propiedad para el caso base.
+
+Otra forma de probar el caso base:
+
+```haskell
+  length (duplicar [])          {D0}
+= length ([])                   {L0}
+= 0                             
+= 2 * 0                         {L0}
+= 2 * length []                 
+```
+
+> caso inductivo $(\forall x::a, \forall xs::[a]) \ P(xs) \rightarrow P(x:xs)$
+
+qvq $length (duplicar (x:xs)) = 2 * length (x:xs)$
+
+```haskell
+  length (duplicar (x:xs))              {D1}
+= length (x : x : duplicar xs)          {L1}
+= 1 + length (x : duplicar xs)          {L1}
+= 1 + 1 + length (duplicar xs)          {HI}
+= 2 + 2 * length xs                     
+= 2 * (1 + length xs)                   {L1}
+= 2 * length (x:xs)
+```
+
+Queda asi demostrado la propiedad
+
+## II
+
+$P(XS) \equiv \forall xs::[a] \ \forall ys::[a]$ length (xs ++ ys) = length xs + length ys
+
+Inducción en la estructura de xs
+
+> caso base $P([])$
+
+```haskell
+  length ([] ++ ys)     {++0}
+= length (ys)
+= 0 + length (ys)       {L0}
+= length [] + length ys
+```
+
+> caso inductivo $(\forall x::a, \forall xs::[a]) \ P(xs) \rightarrow P(x:xs)$
+
+qvq $length ((x:xs) ++ ys) = length (x:xs) + length ys$
+
+```haskell
+  length ((x:xs) ++ ys)         {++1}
+= length (x : (xs ++ ys))       {L1}
+= 1 + length (xs ++ ys)         {HI}
+= 1 + length xs + length ys     {L1}
+= length (x:xs) + length ys
+
+```
+
+## III
+
+$P(XS) \equiv \forall xs::[a], \forall x::a$, [x] ++ xs = x:xs
+
+Inducción en la estructura de xs
+
+```haskell
+{FR0} foldr f z [] = z
+{FR1} foldr f z (x:xs) = f x (foldr f z xs)                   
+```
+
+
+qvq $[x] ++ [] = x:[]$
+
+> caso base $P([])$
+
+```haskell
+  [x] ++ []                     {A0}
+= foldr (:) [] [x]              {FR1}
+= (:) x (foldr (:) [] [])       {FR0}
+= (:) x []
+= x : []
+```
+
+> caso inductivo $(\forall x::a, \forall xs::[a]) \ P(xs) \rightarrow P(x:xs)$
+
+qvq $[x] ++ (y:ys) = x:(y:ys)$
+
+```haskell
+  [x] ++ (y:ys)                 {a0}
+= foldr (:) (y:ys) [x]          {FR1}
+= (:) x (foldr (:) (y:ys) [])   {FR0}
+= (:) x (y:ys)
+= x : (y:ys)
+```
+
+## IV
+
+$P(XS) \equiv \forall xs::[a]$
+
+Inducción en la estructura de xs
+
+> caso base $P([])$
+```haskell
+
+```
+
+
+> caso inductivo $(\forall x::a, \forall xs::[a]) \ P(xs) \rightarrow P(x:xs)$
+```haskell
+
+```
+## V
+
+$P(XS) \equiv \forall xs::[a]$
+
+Inducción en la estructura de xs
+
+> caso base $P([])$
+```haskell
+
+```
+
+
+> caso inductivo $(\forall x::a, \forall xs::[a]) \ P(xs) \rightarrow P(x:xs)$
+```haskell
+
+```
+## VI
+
+$P(XS) \equiv \forall xs::[a]$
+
+Inducción en la estructura de xs
+
+> caso base $P([])$
+```haskell
+
+```
+
+
+> caso inductivo $(\forall x::a, \forall xs::[a]) \ P(xs) \rightarrow P(x:xs)$
+```haskell
+
+```
+
+## VII
+
+$P(XS) \equiv \forall xs::[a]$
+
+Inducción en la estructura de xs
+
+> caso base $P([])$
+```haskell
+
+```
+
+
+> caso inductivo $(\forall x::a, \forall xs::[a]) \ P(xs) \rightarrow P(x:xs)$
+```haskell
+
+```
+
+
+# Ejercicio 4
+
+## I
+
+Por principio de extensionalidad sobre listas, basta con probar que 
+$\forall xs::[a]$ ```reverse xs = foldr (\x rec -> rec ++ (x:[])) xs```
+
+Y para ello usamos inducción estructural sobre la lista xs
+
+> caso base 
+
+```haskell
+        foldl :: (b -> a -> b) -> b -> [a] -> b
+{FL0}   foldl f z [] = z
+{FL1}   foldl f z (x:xs) = foldl f (f z x) xs
+
+        foldr :: (a -> b -> b) -> b -> [a] -> b 
+{FR0}   foldr f z [] = z
+{FR1}   foldr f z (x:xs) = f x (foldr f z xs)      
+
+
+--qvq
+reverse [] = foldr (\x rec -> rec ++ (x:[])) [] []
+
+```
+
+Desarrollamos ambos lados de la ecuación
+
+```haskell
+  reverse []                    {R0}
+= foldl (flip (:)) [] []        {FL0}
+= []
+```
+
+```haskell
+  foldr (\x rec -> rec ++ (x:[])) [] []
+= []                                            {FR0}
+```
+
+
+> caso inductivo
+
+```haskell
+-- HI
+reverse xs = foldr (\y rec -> rec ++ (y:[])) [] xs
+
+--- qvq ∀ xs::[a], x::a
+reverse (x:xs) = foldr (\y rec -> rec ++ (y:[])) [] (x:xs)
+```
+
+```haskell
+  foldr (\y rec -> rec ++ (x:[])) [] (x:xs)                                     {FR1}
+= (\x rec -> rec ++ (y:[])) x (foldr (\y rec -> rec ++ (y:[])) [] xs)           {evaluamos el primer lambda}
+= (foldr (\y rec -> rec ++ (y:[])) [] xs) ++ (x:[])
+= (foldr (\y rec -> rec ++ (y:[])) [] xs) ++ [x]                                {HI}
+= reverse xs ++ [x]                                                             {R0}
+= foldl (flip (:)) [] xs ++ [x]                                                 {Lema 1}
+= foldl (flip (:)) [x] xs                                                       
+= foldl (flip (:)) ((flip (:) [] x)) xs                                         {FL1}
+= foldl (flip (:)) [] (x:xs)                                                    {R0}                      
+= reverse (x:xs)                                                                                       
+```
+
+> Lema 1
+```haskell
+-- foldl (flip (:)) [] xs ++ ys = foldl (flip (:)) ys xs
+
+-- Caso base xs = []
+
+  foldl (flip (:)) [] [] ++ ys          {FL0}
+= [] ++ ys                              {++0}
+= ys
+
+  foldl (flip (:)) ys []                {FL0}
+= ys
+
+-- caso inductivo
+
+-- hi: foldl (flip (:)) [] xs ++ ys = foldl (flip (:)) ys xs
+
+-- qvq foldl (flip (:)) [] (x:xs) ++ ys = foldl (flip (:)) ys (x:xs)
+
+  foldl (flip (:)) [] (x:xs) ++ ys                              {FL1}
+= foldl (flip (:)) ((flip (:)) [] x) xs ++ ys                   
+= foldl (flip (:)) [x] xs ++ ys                                 {HI}
+= foldl (flip (:)) [] xs ++ [x] ++ ys                           {++1, ++0}
+= foldl (flip (:)) [] xs ++ x:ys                                {HI, podemos por que la inducción vale para cualquier ys}
+= foldl (flip (:)) x:ys xs                                      
+= foldl (flip (:)) ((flip (:)) ys x) xs
+= foldl (flip (:)) ys (x:xs)
+
+```
+
+
+
+
+
+## II
+
+## III
+
+# Ejercicio 6
+
+
+# Ejercicio 7
+
+
+# Ejercicio 10
+
+
+# Ejercicio 13
