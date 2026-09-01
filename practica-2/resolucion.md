@@ -583,7 +583,7 @@ Usando lema de generación e inducción estructural sobre xs quermos ver que
 = [y]
 ```
 
-> caso inductivo ∀ x::a ∀ xs::[a] (∀ y::a P(xs)) ⇒ (∀ y::a P(x:xs, ys))
+> caso inductivo ∀ x::a ∀ xs::[a] (∀ y::a P(xs, y)) ⇒ (∀ y::a P(x:xs, y))
 
 ```haskell
 -- HI: reverse (xs ++ [y]) = y:reverse xs
@@ -614,6 +614,88 @@ Usando lema de generación e inducción estructural sobre xs quermos ver que
 ```
 
 # Ejercicio 6
+
+```haskell
+     zip :: [a] -> [b] -> [(a,b)]
+{Z0} zip = foldr (\x rec ys ->
+                        if null ys
+                            then []
+                            else (x, head ys) : rec (tail ys))
+                        (const [])
+
+-- se puede ver mas claro como que foldr devuelve funciones de tipo  [b] -> [(a,b)]
+
+{Z0} zip = foldr (\x rec -> (ys ->
+                        if null ys
+                            then []
+                            else (x, head ys) : rec (tail ys)))
+                        (const [])
+
+-- foldr :: Foldable t => (a' -> b' -> b') -> b' -> t a' -> b'
+-- en este caso a' = [a], b' = [b] -> [(a, b)]
+-- luego el tipo de zip es [a] -> [b] -> [(a, b)]
+
+{Z'0} zip' [] ys = []
+{Z'1} zip' (x:xs) ys = if null ys then [] else (x, head ys):zip' xs (tail ys)
+
+```
+
+Veamos que zip = zip' usando el principio de extensionalidad e inducción estructural sobre la lista xs.
+Queremos ver que ∀ xs::[a] zip xs = zip' xs
+
+Por lema de generación xs es de la forma [] o (x:xs)
+
+> caso base P([])
+> 
+```haskell
+
+zip' [] ys = []                                                            {Z'0}
+
+  zip [] 
+= foldr (\x rec ys -> if null ys
+                        then []
+                        else (x, head ys) : rec (tail ys))
+        (const []) 
+        [] ys                                                             {FR0}
+= const [] ys                                                             {const}
+= []            
+```
+
+> caso inductivo ∀ x::a ∀ xs::[a] (∀ ys::[a] P(xs, ys)) ⇒ (∀ ys::[a] P(x:xs, ys))
+
+```haskell
+-- HI: zip xs ys = zip' xs ys
+-- qvq: zip (x:xs) ys = zip' (x:xs) ys
+
+-- sea f = (\x' rec ys' -> if null ys' then [] else (x', head ys') : rec (tail ys'))
+
+-- vamos a tener que separar en casos para ys
+
+-- caso ys = []
+
+  zip' (x:xs) []                                                    {Z'1}
+= []
+
+  zip (x:xs) []                                                     {Z0}
+= foldr f (const []) (x:xs) []                                      {FR1}
+= f x (foldr f (const []) xs) []                                    {evaluamos f}
+= if null []
+    then []
+    else (x, head ys) : (foldr f (const []) xs) (tail ys)           {rama true del if}
+= []       
+
+
+-- caso ys = (z:zs)
+  zip' (x:xs) (z:zs)                                                            {Z'1}
+= if null (z:zs) then [] else (x, head (z:zs)):zip' xs (tail (z:zs))            {rama false del if}
+= (x, head (z:zs)) : zip' xs (tail (z:zs))
+= (x, z) : zip' xs zs                                                           {HI}
+= (x, z) : zip xs zs                                                            {Z0}
+= (x, z) : foldr f (const []) xs zs                                             {f rama else}
+= f x (foldr f (const []) xs) (z:zs)                                            {FR1}
+= foldr f (const []) (x:xs) (z:zs)                                              {zip}
+= zip (x:xs) (z:zs)
+```
 
 
 # Ejercicio 7
