@@ -858,5 +858,59 @@ Eq a => ∀ xs::[a] . ∀ e::a . elem e xs = elem e (nub xs)
 
 # Ejercicio 10
 
+```haskell
+data AB a = Nil | Bin (AB a) a (AB a)
+
+-- La funcion del primer parametro recibe por parametro el nodo actual, el resultado de la recursion del sub-arbol izq y el del sub arbol derecho
+        foldAB :: (a -> b -> b -> b) -> b -> AB a -> b
+{FAB0}  foldAB _ z Nil = z
+{FAB1}  foldAB f z (Bin x1 x2 x3) = f x2 (foldAB f z x1) (foldAB f z x3)
+
+        altura :: AB a -> Int
+{A}     altura arbolBin = foldAB (\_ i d -> 1 + max i d) 0 arbolBin
+
+        cantNodos :: AB a -> Int
+{CN}    cantNodos arbolBin = foldAB (\_ i d -> 1 + i + d) 0 arbolBin
+
+∀ x::AB a altura x ≤ cantNodos x
+```
+
+Vamos a demostrar la propiedad usando lema de generación e inducción estructural sobre AB
+
+> caso base P(Nil)
+
+```haskell
+
+  altura Nil                                            {A}
+= foldAB (\_ i d -> 1 + max i d) 0 NIL                  {FAB0}
+= 0
+
+  cantNodos Nil                                         {CN}
+= foldAB (\_ i d -> 1 + i + d) 0 Nil                    {FAB0}
+= 0
+```
+
+> caso inductivo ∀ izq, der :: AB a   (P(izq) ∧ P(der)) ⇒ (∀ e::a P(Bin izq e der))
+
+```haskell
+-- HI:  ∀ i, d :: AB a,  altura i ≤ cantNodos d && altura i ≤ cantNodos d
+-- qvq: ∀ e::a  altura Bin i e d ≤ cantNodos i e d
+
+  cantNodos Bin i e d                                           {CN}
+= foldAB (\_ i d -> 1 + i + d) 0 (Bin i e d)                    {FAB1}
+= f e (foldAB f 0 i) (foldAB f 0 d)                             {evaluar f}
+= 1 + (foldAB f 0 i) + (foldAB f 0 d)                           {CN}
+= 1 + (cantNodos i) + (cantNodos d)
+
+  altura Bin i e d                                              {A}
+= foldAB (\_ i' d' -> 1 + max i' d') 0 (Bin i e d)              {FAB1}
+= f e (foldAB f 0 i) (foldAB f 0 d)                             {evaluar f}
+= 1 + max (foldAB f 0 i) (foldAB f 0 d)                         {A}
+= 1 + max (altrua i) (altura d)                                 {HI, prop maximos}
+≤ 1 + max (cantNodos i) (cantNodos d)                           {propiedad maximos}
+≤ 1 + (cantNodos i) + (cantNodos d)                             
+= cantNodos Bin i e d
+```
+
 
 # Ejercicio 13
