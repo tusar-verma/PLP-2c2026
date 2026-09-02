@@ -700,6 +700,161 @@ zip' [] ys = []                                                            {Z'0}
 
 # Ejercicio 7
 
+## I
+
+Verdadera
+
+Usando lema de generación e inducción estructural sobre la lista xs. 
+
+```haskell
+Eq a => ∀ xs::[a] . ∀ e::a . ∀ p::a -> Bool . elem e xs && p e = elem e (filter p xs)
+
+         filter :: (a -> Bool) -> [a] -> [a]
+{F0}    filter [] = []
+{F1}    filter p (x:xs) = if p x then x : filter p xs else filter p xs
+
+
+        elem :: Eq a => a -> [a] -> Bool
+{E0}    elem e [] = False
+{E1}    elem e (x:xs) = (e == x) || elem e xs
+```
+
+> caso base  ∀ e::a . ∀ p::a -> Bool  P([], e, p)
+
+```haskell
+-- qvq: elem e [] && p e = elem e (filter p [])
+
+  elem e [] && p e
+= False && p e
+= False
+
+  elem e (filter p [])
+= elem e []
+= False 
+```
+
+> caso inductivo ∀ x::a ∀ xs::[a] (∀ e::a . ∀ p::a -> Bool P(xs, e, p)) ⇒ (∀ e::a . ∀ p::a -> Bool P(x:xs, e, p))
+
+```haskell
+-- HI:  elem e xs && p e = elem e (filter p xs)
+-- qvq: elem e (x:xs) && p e = elem e (filter p (x:xs))
+
+-- caso p x == True
+
+  elem e (x:xs) && p e                                  {E1}
+= ((e == x) || elem e xs) && p e                        {distributiba &&}
+= ((e == x) && p e) || (elem e xs && p e)               {HI}
+= (e == x && p e) || elem e (filter p xs)          
+
+  elem e (filter p (x:xs))                              {F1, con p x true}
+= elem e (x : filter p xs)                              {E1}
+= (e == x) || elem e (filter p xs)                      
+
+-- basta con ver que (e == x && p e) = (e == x)
+
+-- caso e == x, por congruencia p(e) = p(x) = True
+(e == x && p e) = True && True = True
+(e == x) = True
+-- caso e != x   
+(e == x && p e) = False
+(e == x) = False
+
+-- caso p x = False
+  elem e (x:xs) && p e                                  {E1}
+= ((e == x) || elem e xs) && p e                        {distributiba &&}
+= ((e == x) && p e) || (elem e xs && p e)               {HI}
+= (e == x && p e) || elem e (filter p xs)               {(e == x && p e) siempre False}
+= elem e (filter p xs)
+
+  elem e (filter p (x:xs))                              {F1, con p x false}
+= elem e (filter p xs)                                  
+
+-- (e == x && p e) siempre False
+-- caso e == x, por congruencia p(e) = p(x) = False
+True && False = False
+
+-- caso e != x
+False && p e = False
+``` 
+
+## II
+
+Verdadero
+
+Usando lema de generación e inducción estructural sobre listas
+
+```haskell
+Eq a => ∀ xs::[a] . ∀ e::a . elem e xs = elem e (nub xs)
+
+-- Devuelve una lista sin elementos repetidos
+     nub :: Eq a => [a] -> [a]
+{N0} nub [] = []
+{N1} nub (x:xs) = x : filter (\y -> x /= y) (nub xs)
+
+
+     elem :: Eq a => a -> [a] -> Bool
+{E0} elem e [] = False
+{E1} elem e (x:xs) = (e == x) || elem e xs
+```
+> caso base  ∀ e::a P([], e)
+
+```haskell
+  elem e []                     {E0}
+= []
+    
+    
+  elem e (nub [])               {N0}
+= elem e []                     {E0}
+= []
+```
+
+> caso inductivo ∀ xs::[a] (∀ e::a P(xs, e)) ⇒ (∀ e::a P(x:xs, e))
+
+```haskell
+-- HI: elem e xs = elem e (nub xs)
+-- qvq: elem e (x:xs) = elem e (nub (x:xs))
+
+  elem e (x:xs)                                     {E1}
+= (e == x) || (elem e xs)                           {HI}
+= (e == x) || elem e (nub xs)
+    
+  elem e (nub (x:xs))                                               {N1}
+= elem e (x : filter (\y -> x /= y) (nub xs))                       {E1}
+= (e == x) || elem e filter (\y -> x /= y) (nub xs)                {Inciso I}
+= (e == x) || elem e (nub xs) && ((\y -> x /= y) e)           
+
+-- caso e == x, vemos ambas ecuaciones:
+
+  (e == x) || elem e (nub xs)
+= True || elem e (nub xs)
+= True
+
+  (e == x) || elem e (nub xs) && ((\y -> x /= y) e)           {evaluar e en la func lambda}
+= (e == x) || elem e (nub xs) && (x /= e)                     {e == x}
+= True || elem e (nub xs) && False
+= True
+
+-- caso e /= x
+  (e == x) || elem e (nub xs)                                 {e /= x}
+= elem e (nub xs)
+
+  (e == x) || elem e (nub xs) && ((\y -> x /= y) e)             {evaluar e en la func lambda}
+= (e == x) || elem e (nub xs) && (x /= e)                     {e /= x}
+= False || elem e (nub xs) && True
+= elem e (nub xs)
+
+-- Para ambos casos ambas ecuaciones son equivalentes. Queda demostrada la hipotesis inductiva, y la propiedad.
+
+```
+
+## III
+
+## IV
+
+## V
+
+## VI
+
 
 # Ejercicio 10
 
