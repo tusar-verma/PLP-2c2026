@@ -120,10 +120,10 @@ fInvertirCaja (Bombilla True) = cajaOn
 fInvertirCaja (Bombilla False) = cajaOff
 
 fInvertirSerie :: Circuito -> Circuito -> Circuito
-fInvertirSerie c1 c2 = (Serie c2 c1)
+fInvertirSerie r1 r2 = (Serie r2 r1)
 
 fInvertirParalelo :: Caja -> Caja -> Circuito -> Circuito -> Circuito
-fInvertirParalelo cj1 cj2 c1 c2 = (Paralelo cj2 c2 c1 cj1)
+fInvertirParalelo cj1 cj2 r1 r2 = (Paralelo cj2 r2 r1 cj1)
 
 -- 4: hayCaminoIluminado
 
@@ -136,14 +136,26 @@ fhayCaminoIluminadoCaja (Bombilla True) = True
 fhayCaminoIluminadoCaja (Bombilla False) = False
 
 fhayCaminoIluminadoSerie :: Bool -> Bool -> Bool
-fhayCaminoIluminadoSerie c1 c2 = c1 && c2
+fhayCaminoIluminadoSerie r1 r2 = r1 && r2
 
 fhayCaminoIluminadoParalelo :: Caja -> Caja -> Bool -> Bool -> Bool
-fhayCaminoIluminadoParalelo cj1 cj2 c1 c2 = fhayCaminoIluminadoCaja cj1 && fhayCaminoIluminadoCaja cj2 && (c1 || c2)
+fhayCaminoIluminadoParalelo cj1 cj2 r1 r2 = fhayCaminoIluminadoCaja cj1 && fhayCaminoIluminadoCaja cj2 && (r1 || r2)
 
 -- 5: cantidadPrendidas
 
-cantidadPrendidas = undefined -- TODO: COMPLETAR
+cantidadPrendidas :: Circuito -> Int
+cantidadPrendidas c = foldCircuito fcantidadPrendidasCaja fcantidadPrendidasSerie fcantidadPrendidasParalelo c
+
+fcantidadPrendidasCaja :: Caja -> Int
+fcantidadPrendidasCaja Nada = 0
+fcantidadPrendidasCaja (Bombilla True) = 1
+fcantidadPrendidasCaja (Bombilla False) = 0
+
+fcantidadPrendidasSerie :: Int -> Int -> Int
+fcantidadPrendidasSerie r1 r2 = r1 + r2
+
+fcantidadPrendidasParalelo :: Caja -> Caja -> Int -> Int -> Int
+fcantidadPrendidasParalelo cj1 cj2 r1 r2 = fcantidadPrendidasCaja cj1 + fcantidadPrendidasCaja cj2 + r1 + r2
 
 -- 6: cajasDeCircuito
 

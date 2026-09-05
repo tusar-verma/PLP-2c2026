@@ -45,7 +45,10 @@ testsCantidadPrendidas =
   TestList -- TODO: AGREGAR
     [ "Cantidad prendidas en caja prendida es 1"
         ~: cantidadPrendidas cajaOn
-        ~?= 1
+        ~?= 1,
+      "Cantidad prendidas en ejemplo enunciado"
+        ~: cantidadPrendidas (Serie (Paralelo on (Paralelo off cajaNada cajaOn on) (Paralelo Nada cajaOn cajaOff Nada) on) cajaOn)
+        ~?= 6
     ]
 
 testsCajasDeCircuito :: Test
@@ -89,8 +92,8 @@ tests :: Test
 tests =
   TestList
     [ TestLabel "invertido" testsInvertido,
-      TestLabel "hayCaminoIluminado" testsHayCaminoIluminado
-      -- , TestLabel "cantidadPrendidas"        testsCantidadPrendidas
+      TestLabel "hayCaminoIluminado" testsHayCaminoIluminado,
+      TestLabel "cantidadPrendidas" testsCantidadPrendidas
       -- , TestLabel "cajasDeCircuito"          testsCajasDeCircuito
       -- , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
       -- , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
