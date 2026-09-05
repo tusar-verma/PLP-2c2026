@@ -25,6 +25,18 @@ testsHayCaminoIluminado =
   TestList -- TODO: AGREGAR
     [ "En una caja con bombilla encendida hay camino iluminado"
         ~: hayCaminoIluminado cajaOn
+        ~?= True,
+      "Caja sin bombilla no hay camino iluminado"
+        ~: hayCaminoIluminado cajaNada
+        ~?= False,
+      "En ejemplo enunciado no hay cambino iluminado"
+        ~: hayCaminoIluminado (Serie (Paralelo on (Paralelo off cajaNada cajaOn on) (Paralelo Nada cajaOn cajaOff Nada) on) cajaOn)
+        ~?= False,
+      "Modificacion de ejemplo de enunciado para agregar camino iluminado"
+        ~: hayCaminoIluminado (Serie (Paralelo on (Paralelo off cajaNada cajaOn on) (Paralelo on cajaOn cajaOff on) on) cajaOn)
+        ~?= True,
+      "Invertir ejemplo modificado todavia tiene camino iluminado"
+        ~: hayCaminoIluminado (invertido (Serie (Paralelo on (Paralelo off cajaNada cajaOn on) (Paralelo on cajaOn cajaOff on) on) cajaOn))
         ~?= True
     ]
 
@@ -76,14 +88,14 @@ testsSubCircuitoMásResistente =
 tests :: Test
 tests =
   TestList
-    [ TestLabel "invertido" testsInvertido
-    -- , TestLabel "hayCaminoIluminado"       testsHayCaminoIluminado
-    -- , TestLabel "cantidadPrendidas"        testsCantidadPrendidas
-    -- , TestLabel "cajasDeCircuito"          testsCajasDeCircuito
-    -- , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
-    -- , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
-    -- , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
-    -- , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
+    [ TestLabel "invertido" testsInvertido,
+      TestLabel "hayCaminoIluminado" testsHayCaminoIluminado
+      -- , TestLabel "cantidadPrendidas"        testsCantidadPrendidas
+      -- , TestLabel "cajasDeCircuito"          testsCajasDeCircuito
+      -- , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
+      -- , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
+      -- , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
+      -- , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
     ]
 
 main :: IO ()

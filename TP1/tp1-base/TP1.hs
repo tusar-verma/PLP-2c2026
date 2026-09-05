@@ -127,7 +127,19 @@ fInvertirParalelo cj1 cj2 c1 c2 = (Paralelo cj2 c2 c1 cj1)
 
 -- 4: hayCaminoIluminado
 
-hayCaminoIluminado = undefined -- TODO: COMPLETAR
+hayCaminoIluminado :: Circuito -> Bool
+hayCaminoIluminado c = foldCircuito fhayCaminoIluminadoCaja fhayCaminoIluminadoSerie fhayCaminoIluminadoParalelo c
+
+fhayCaminoIluminadoCaja :: Caja -> Bool
+fhayCaminoIluminadoCaja Nada = False
+fhayCaminoIluminadoCaja (Bombilla True) = True
+fhayCaminoIluminadoCaja (Bombilla False) = False
+
+fhayCaminoIluminadoSerie :: Bool -> Bool -> Bool
+fhayCaminoIluminadoSerie c1 c2 = c1 && c2
+
+fhayCaminoIluminadoParalelo :: Caja -> Caja -> Bool -> Bool -> Bool
+fhayCaminoIluminadoParalelo cj1 cj2 c1 c2 = fhayCaminoIluminadoCaja cj1 && fhayCaminoIluminadoCaja cj2 && (c1 || c2)
 
 -- 5: cantidadPrendidas
 
