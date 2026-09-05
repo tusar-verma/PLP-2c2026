@@ -18,7 +18,7 @@ data Circuito
   deriving (Eq)
 
 instance Show Circuito where
-  show = showDeCircuito
+  show = showDeCircuitoConEstructura
 
 showDeCircuito :: Circuito -> String
 showDeCircuito (Caja caja) = showDeCaja caja
@@ -193,7 +193,40 @@ noEsSerie (Paralelo cj1 c1 c2 cj2) = True
 
 -- 8: circuitoEmprolijado
 
-circuitoEmprolijado = undefined -- TODO: COMPLETAR
+-- circuitoEmprolijado :: Circuito -> Circuito
+-- circuitoEmprolijado = recCircuito fcircuitoEmprolijadoCaja fcircuitoEmprolijadoSerie fcircuitoEmprolijadoParalelo
+
+-- fcircuitoEmprolijadoCaja :: Caja -> Circuito
+-- fcircuitoEmprolijadoCaja Nada = Caja Nada
+-- fcircuitoEmprolijadoCaja (Bombilla True) = cajaOn
+-- fcircuitoEmprolijadoCaja (Bombilla False) = cajaOff
+
+-- fcircuitoEmprolijadoSerie :: Circuito -> Circuito -> Circuito -> Circuito -> Circuito
+-- fcircuitoEmprolijadoSerie c1 c2 r1 r2 = if (noEsSerie r2) then (Serie r1 r2) else (asociarIzquierda r1 r2)
+
+-- fcircuitoEmprolijadoParalelo :: Caja -> Circuito -> Circuito -> Caja -> Circuito -> Circuito -> Circuito
+-- fcircuitoEmprolijadoParalelo cj1 c1 c2 cj2 r1 r2 = (Paralelo cj1 r1 r2 cj2)
+
+-- asociarIzquierda :: Circuito -> Circuito -> Circuito
+-- asociarIzquierda cSerie = recCircuito fasociarIzquierdaCaja fasociarIzquierdaSerie fasociarIzquierdaParalelo cSerie
+
+-- fasociarIzquierdaCaja :: Caja -> Circuito -> Circuito
+-- fasociarIzquierdaCaja c cSerie = (\(p1, p2) -> Serie (Serie (Caja c) p1) p2) (desarmarSerie cSerie)
+
+-- fasociarIzquierdaSerie :: Circuito -> Circuito -> Circuito -> Circuito -> Circuito
+-- fasociarIzquierdaSerie (Serie c1 c2) cSerie = (\(p1, p2) -> Serie (Serie c1 p1) p2) (desarmarSerie cSerie)
+
+-- fasociarIzquierdaParalelo :: Caja -> Circuito -> Circuito -> Caja -> Circuito -> Circuito -> Circuito
+-- fasociarIzquierdaParalelo (Paralelo cj1 c1 c2 cj2) cSerie = (\(p1, p2) -> Serie (Serie (Paralelo cj1 c1 c2 cj2) p1) p2) (desarmarSerie cSerie)
+
+-- asociarIzquierda :: Circuito -> Circuito -> Circuito
+-- asociarIzquierda (Caja c) cSerie = (\(p1, p2) -> Serie (Serie (Caja c) p1) p2) (desarmarSerie cSerie)
+-- asociarIzquierda (Serie c1 c2) cSerie = (\(p1, p2) -> Serie (Serie c1 p1) p2) (desarmarSerie cSerie)
+-- asociarIzquierda (Paralelo cj1 c1 c2 cj2) cSerie = (\(p1, p2) -> Serie (Serie (Paralelo cj1 c1 c2 cj2) p1) p2) (desarmarSerie cSerie)
+
+-- desarmarSerie :: Circuito -> (Circuito, Circuito)
+-- desarmarSerie (Serie c1 c2) = (c1, c2)
+-- desarmarSerie _ = error ("No tiene sentido llamar a desarmarSerie con un circuito no serie")
 
 -- 9: tienenLaMismaEstructura
 

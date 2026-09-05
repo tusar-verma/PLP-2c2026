@@ -85,10 +85,23 @@ testsEsCircuitoProlijo =
 testsCircuitoEmprolijado :: Test
 testsCircuitoEmprolijado =
   TestList -- TODO: AGREGAR
-    [ "La versión emprolijada de una caja es la misma caja"
-        ~: circuitoEmprolijado cajaOn
-        ~?= cajaOn
-    ]
+    []
+
+--  "La versión emprolijada de una caja es la misma caja"
+--     ~: circuitoEmprolijado cajaOn
+--     ~?= cajaOn,
+--   "Version emprolijada del ejemplo del enunciado"
+--     ~: circuitoEmprolijado (Serie cajaOn (Serie cajaOff cajaOn))
+--     ~?= (Serie (Serie cajaOn cajaOff) cajaOn),
+--   "Un ejemplo mas dificil"
+--     ~: circuitoEmprolijado (Serie cajaOn (Serie cajaOff (Paralelo Nada cajaOn (Serie cajaOn (Serie cajaOff cajaOn)) off)))
+--     ~?= Serie (Serie cajaOn cajaOff) (Paralelo Nada cajaOn (Serie (Serie cajaOn cajaOff) cajaOn) off),
+--   "Series anidadas"
+--     ~: circuitoEmprolijado (Serie cajaOn (Serie cajaOff (Serie cajaOn (Serie cajaOff cajaOn))))
+--     ~?= Serie (Serie (Serie (Serie cajaOn cajaOff) cajaOn) cajaOff) cajaOn,
+--   "Muchas series anidadas, un paralelo y varias series anidadas"
+--     ~: circuitoEmprolijado (Serie cajaOn (Serie cajaOff (Serie cajaOn (Paralelo on (Serie cajaOn (Serie cajaOff (Serie cajaOn cajaOff))) cajaNada off))))
+--     ~?= Serie (Serie (Serie cajaOn cajaOff) cajaOn) (Paralelo on (Serie (Serie (Serie cajaOn cajaOff) cajaOn) cajaOff) cajaNada off)
 
 testsTienenLaMismaEstructura :: Test
 testsTienenLaMismaEstructura =
@@ -108,7 +121,7 @@ tests =
       TestLabel "cantidadPrendidas" testsCantidadPrendidas,
       TestLabel "cajasDeCircuito" testsCajasDeCircuito,
       TestLabel "esCircuitoProlijo" testsEsCircuitoProlijo
-      -- , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
+      -- TestLabel "circuitoEmprolijado" testsCircuitoEmprolijado
       -- , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
       -- , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
     ]
