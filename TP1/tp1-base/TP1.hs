@@ -112,7 +112,7 @@ foldCircuito fCaja fSerie fParalelo c = recCircuito fCaja (\c1 c2 r1 r2 -> fSeri
 
 -- 3 invertido
 invertido :: Circuito -> Circuito
-invertido c = foldCircuito fInvertirCaja fInvertirSerie fInvertirParalelo c
+invertido = foldCircuito fInvertirCaja fInvertirSerie fInvertirParalelo
 
 fInvertirCaja :: Caja -> Circuito
 fInvertirCaja Nada = cajaNada
@@ -128,7 +128,7 @@ fInvertirParalelo cj1 cj2 r1 r2 = (Paralelo cj2 r2 r1 cj1)
 -- 4: hayCaminoIluminado
 
 hayCaminoIluminado :: Circuito -> Bool
-hayCaminoIluminado c = foldCircuito fhayCaminoIluminadoCaja fhayCaminoIluminadoSerie fhayCaminoIluminadoParalelo c
+hayCaminoIluminado = foldCircuito fhayCaminoIluminadoCaja fhayCaminoIluminadoSerie fhayCaminoIluminadoParalelo
 
 fhayCaminoIluminadoCaja :: Caja -> Bool
 fhayCaminoIluminadoCaja Nada = False
@@ -144,7 +144,7 @@ fhayCaminoIluminadoParalelo cj1 cj2 r1 r2 = fhayCaminoIluminadoCaja cj1 && fhayC
 -- 5: cantidadPrendidas
 
 cantidadPrendidas :: Circuito -> Int
-cantidadPrendidas c = foldCircuito fcantidadPrendidasCaja fcantidadPrendidasSerie fcantidadPrendidasParalelo c
+cantidadPrendidas = foldCircuito fcantidadPrendidasCaja fcantidadPrendidasSerie fcantidadPrendidasParalelo
 
 fcantidadPrendidasCaja :: Caja -> Int
 fcantidadPrendidasCaja Nada = 0
@@ -159,7 +159,19 @@ fcantidadPrendidasParalelo cj1 cj2 r1 r2 = fcantidadPrendidasCaja cj1 + fcantida
 
 -- 6: cajasDeCircuito
 
-cajasDeCircuito = undefined -- TODO: COMPLETAR
+cajasDeCircuito :: Circuito -> [Caja]
+cajasDeCircuito = foldCircuito fcajasDeCircuitoCaja fcajasDeCircuitoSerie fcajasDeCircuitoParalelo
+
+fcajasDeCircuitoCaja :: Caja -> [Caja]
+fcajasDeCircuitoCaja Nada = [Nada]
+fcajasDeCircuitoCaja (Bombilla True) = [Bombilla True]
+fcajasDeCircuitoCaja (Bombilla False) = [Bombilla False]
+
+fcajasDeCircuitoSerie :: [Caja] -> [Caja] -> [Caja]
+fcajasDeCircuitoSerie r1 r2 = r1 ++ r2
+
+fcajasDeCircuitoParalelo :: Caja -> Caja -> [Caja] -> [Caja] -> [Caja]
+fcajasDeCircuitoParalelo cj1 cj2 r1 r2 = [cj1] ++ r1 ++ r2 ++ [cj2]
 
 -- 7: esCircuitoProlijo
 

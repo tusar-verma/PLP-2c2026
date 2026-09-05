@@ -56,7 +56,13 @@ testsCajasDeCircuito =
   TestList -- TODO: AGREGAR
     [ "La lista de cajas de un circuito con una única caja es la lista con esa caja"
         ~: cajasDeCircuito cajaOn
-        ~?= [on]
+        ~?= [on],
+      "Lista de cajas de ejemplo enunciado"
+        ~: cajasDeCircuito (Serie (Paralelo on (Paralelo off cajaNada cajaOn on) (Paralelo Nada cajaOn cajaOff Nada) on) cajaOn)
+        ~?= [on, off, Nada, on, on, Nada, on, off, Nada, on, on],
+      "Lista de cajas de ejemplo enunciado pero inertido"
+        ~: cajasDeCircuito (invertido (Serie (Paralelo on (Paralelo off cajaNada cajaOn on) (Paralelo Nada cajaOn cajaOff Nada) on) cajaOn))
+        ~?= [on, on, Nada, off, on, Nada, on, on, Nada, off, on]
     ]
 
 testsEsCircuitoProlijo :: Test
@@ -93,8 +99,8 @@ tests =
   TestList
     [ TestLabel "invertido" testsInvertido,
       TestLabel "hayCaminoIluminado" testsHayCaminoIluminado,
-      TestLabel "cantidadPrendidas" testsCantidadPrendidas
-      -- , TestLabel "cajasDeCircuito"          testsCajasDeCircuito
+      TestLabel "cantidadPrendidas" testsCantidadPrendidas,
+      TestLabel "cajasDeCircuito" testsCajasDeCircuito
       -- , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
       -- , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
       -- , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
