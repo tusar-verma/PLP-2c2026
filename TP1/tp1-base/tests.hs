@@ -141,8 +141,8 @@ tests =
       TestLabel "cajasDeCircuito" testsCajasDeCircuito,
       TestLabel "esCircuitoProlijo" testsEsCircuitoProlijo,
       -- TestLabel "circuitoEmprolijado" testsCircuitoEmprolijado
-      TestLabel "tienenLaMismaEstructura" testsTienenLaMismaEstructura
-      -- , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
+      TestLabel "tienenLaMismaEstructura" testsTienenLaMismaEstructura,
+      TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
     ]
 
 main :: IO ()

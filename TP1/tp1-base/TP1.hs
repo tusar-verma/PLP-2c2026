@@ -256,7 +256,28 @@ ftienenLaMismaEstructuraParalelo cj1 cj2 r1 r2 = \c -> case c of
 
 -- 10: subCircuitoMásResistente
 
-subCircuitoMásResistente = undefined -- TODO: COMPLETAR
+resistenciaCircuito :: Circuito -> Float
+resistenciaCircuito c = error ("Sin implementar. Asumir implementado")
+
+subCircuitoMásResistente :: Circuito -> Circuito
+subCircuitoMásResistente c = recCircuito fsubCircuitoMásResistenteCaja fsubCircuitoMásResistenteSerie fsubCircuitoMasResistenteParalelo c
+
+fsubCircuitoMásResistenteCaja :: Caja -> Circuito
+fsubCircuitoMásResistenteCaja Nada = Caja Nada
+fsubCircuitoMásResistenteCaja (Bombilla True) = cajaOn
+fsubCircuitoMásResistenteCaja (Bombilla False) = cajaOff
+
+fsubCircuitoMásResistenteSerie :: Circuito -> Circuito -> Circuito -> Circuito -> Circuito
+fsubCircuitoMásResistenteSerie c1 c2 r1 r2 = elMayorSubCircuitoConResistencia r1 r2 (Serie c1 c2)
+
+fsubCircuitoMasResistenteParalelo :: Caja -> Circuito -> Circuito -> Caja -> Circuito -> Circuito -> Circuito
+fsubCircuitoMasResistenteParalelo cj1 c1 c2 cj2 r1 r2 = elMayorSubCircuitoConResistencia r1 r2 (Paralelo cj1 c1 c2 cj2)
+
+elMayorSubCircuitoConResistencia :: Circuito -> Circuito -> Circuito -> Circuito
+elMayorSubCircuitoConResistencia c1 c2 c3
+  | resistenciaCircuito c1 >= resistenciaCircuito c2 && resistenciaCircuito c1 >= resistenciaCircuito c3 = c1
+  | resistenciaCircuito c2 >= resistenciaCircuito c1 && resistenciaCircuito c2 >= resistenciaCircuito c3 = c2
+  | otherwise = c3
 
 {-- 11: Demostrar: alternado . alternado = id
 
