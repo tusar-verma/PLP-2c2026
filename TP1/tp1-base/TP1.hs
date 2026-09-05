@@ -229,8 +229,30 @@ noEsSerie (Paralelo cj1 c1 c2 cj2) = True
 -- desarmarSerie _ = error ("No tiene sentido llamar a desarmarSerie con un circuito no serie")
 
 -- 9: tienenLaMismaEstructura
+tienenLaMismaEstructura :: Circuito -> Circuito -> Bool
+tienenLaMismaEstructura c1 c2 = foldCircuito ftienenLaMismaEstructuraCaja ftienenLaMismaEstructuraSerie ftienenLaMismaEstructuraParalelo c1 c2
 
-tienenLaMismaEstructura = undefined -- TODO: COMPLETAR
+-- Las funciones de cada caso recursivo devuelven una función que devuelve True si el circuito pasado es igual a dicho circuito
+-- Para cada constructor de circuito construimos una función que toma un circuito c y devuelve un booleano si c es igual al circuito
+ftienenLaMismaEstructuraCaja :: Caja -> Circuito -> Bool
+ftienenLaMismaEstructuraCaja cj = \c -> case c of
+  -- No compramos lo que hay en las cajas por que piden igualdad de estructura más allá del contenido de las cajas
+  Caja cj' -> True
+  Serie c1 c2 -> False
+  Paralelo cj1 c1 c2 cj2 -> False
+
+ftienenLaMismaEstructuraSerie :: (Circuito -> Bool) -> (Circuito -> Bool) -> (Circuito -> Bool)
+ftienenLaMismaEstructuraSerie r1 r2 = \c -> case c of
+  Caja cj' -> False
+  Serie c1 c2 -> (r1 c1) && (r2 c2)
+  Paralelo cj1 c1 c2 cj2 -> False
+
+ftienenLaMismaEstructuraParalelo :: Caja -> Caja -> (Circuito -> Bool) -> (Circuito -> Bool) -> (Circuito -> Bool)
+ftienenLaMismaEstructuraParalelo cj1 cj2 r1 r2 = \c -> case c of
+  Caja cj' -> False
+  Serie c1 c2 -> False
+  -- No compramos lo que hay en las cajas por que piden igualdad de estructura más allá del contenido de las cajas
+  Paralelo cj1' c1 c2 cj2' -> (r1 c1) && (r2 c2)
 
 -- 10: subCircuitoMásResistente
 

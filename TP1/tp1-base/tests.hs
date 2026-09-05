@@ -106,7 +106,26 @@ testsCircuitoEmprolijado =
 testsTienenLaMismaEstructura :: Test
 testsTienenLaMismaEstructura =
   TestList -- TODO: AGREGAR
-    []
+    [ "Circuito de una sola caja es igual estructuralmente a circuito de una caja"
+        ~: tienenLaMismaEstructura cajaOn cajaOff
+        ~?= True,
+      "Circuito en serie es igual a circuito en serie"
+        ~: tienenLaMismaEstructura (Serie (Serie (Serie cajaOn cajaOn) cajaOn) cajaOn) (Serie (Serie (Serie cajaOff cajaOff) cajaOff) cajaOff)
+        ~?= True,
+      "Circuito en serie no es igual a circuito en serie distinto"
+        ~: tienenLaMismaEstructura (Serie (Serie (Serie cajaOn cajaOn) cajaOn) cajaOn) (Serie cajaNada cajaOff)
+        ~?= False,
+      "Circuitos paralelos estructuralmente iguales"
+        ~: tienenLaMismaEstructura
+          (Paralelo on (Serie (Serie cajaOn cajaOn) cajaOn) (Paralelo on cajaNada cajaNada on) off)
+          (Paralelo on (Serie (Serie cajaOff cajaOff) cajaOff) (Paralelo on cajaNada cajaOn on) Nada)
+        ~?= True,
+      "Circuitos paralelos estructuralmente no iguales"
+        ~: tienenLaMismaEstructura
+          (Paralelo on (Serie (Serie cajaOn cajaOn) cajaOn) (Serie cajaNada cajaNada) off)
+          (Paralelo on (Serie (Serie cajaOff cajaOff) cajaOff) (Paralelo on cajaNada cajaOn on) Nada)
+        ~?= False
+    ]
 
 testsSubCircuitoMásResistente :: Test
 testsSubCircuitoMásResistente =
@@ -120,9 +139,9 @@ tests =
       TestLabel "hayCaminoIluminado" testsHayCaminoIluminado,
       TestLabel "cantidadPrendidas" testsCantidadPrendidas,
       TestLabel "cajasDeCircuito" testsCajasDeCircuito,
-      TestLabel "esCircuitoProlijo" testsEsCircuitoProlijo
+      TestLabel "esCircuitoProlijo" testsEsCircuitoProlijo,
       -- TestLabel "circuitoEmprolijado" testsCircuitoEmprolijado
-      -- , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
+      TestLabel "tienenLaMismaEstructura" testsTienenLaMismaEstructura
       -- , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
     ]
 
