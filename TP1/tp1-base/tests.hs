@@ -70,7 +70,13 @@ testsEsCircuitoProlijo =
   TestList -- TODO: AGREGAR
     [ "Una caja es prolija"
         ~: esCircuitoProlijo cajaOn
-        ~?= True
+        ~?= True,
+      "Circuito de ejemplo de enunciado prolijo"
+        ~: esCircuitoProlijo (Serie (Serie cajaOn cajaOn) cajaOff)
+        ~?= True,
+      "Circuito de ejemplo de enunciado no prolijo"
+        ~: esCircuitoProlijo (Serie cajaOn (Serie cajaOn cajaOff))
+        ~?= False
     ]
 
 -- NOTA: para correr este test, cambiar la línea 18 del archivo tp1.hs de "show = showDeCircuito" a
@@ -100,8 +106,8 @@ tests =
     [ TestLabel "invertido" testsInvertido,
       TestLabel "hayCaminoIluminado" testsHayCaminoIluminado,
       TestLabel "cantidadPrendidas" testsCantidadPrendidas,
-      TestLabel "cajasDeCircuito" testsCajasDeCircuito
-      -- , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
+      TestLabel "cajasDeCircuito" testsCajasDeCircuito,
+      TestLabel "esCircuitoProlijo" testsEsCircuitoProlijo
       -- , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
       -- , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
       -- , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente

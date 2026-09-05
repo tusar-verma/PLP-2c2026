@@ -174,8 +174,22 @@ fcajasDeCircuitoParalelo :: Caja -> Caja -> [Caja] -> [Caja] -> [Caja]
 fcajasDeCircuitoParalelo cj1 cj2 r1 r2 = [cj1] ++ r1 ++ r2 ++ [cj2]
 
 -- 7: esCircuitoProlijo
+esCircuitoProlijo :: Circuito -> Bool
+esCircuitoProlijo = recCircuito fesCircuitoProlijoCaja fesCircuitoProlijoSerie fesCircuitoProlijoParalelo
 
-esCircuitoProlijo = undefined -- TODO: COMPLETAR
+fesCircuitoProlijoCaja :: Caja -> Bool
+fesCircuitoProlijoCaja c = True
+
+fesCircuitoProlijoSerie :: Circuito -> Circuito -> Bool -> Bool -> Bool
+fesCircuitoProlijoSerie c1 c2 r1 r2 = r1 && r2 && noEsSerie c2
+
+fesCircuitoProlijoParalelo :: Caja -> Circuito -> Circuito -> Caja -> Bool -> Bool -> Bool
+fesCircuitoProlijoParalelo cj1 c1 c2 cj2 r1 r2 = r1 && r2
+
+noEsSerie :: Circuito -> Bool
+noEsSerie (Caja c) = True
+noEsSerie (Serie c1 c2) = False
+noEsSerie (Paralelo cj1 c1 c2 cj2) = True
 
 -- 8: circuitoEmprolijado
 
