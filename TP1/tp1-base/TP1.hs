@@ -111,8 +111,19 @@ foldCircuito :: FCajaEstructural b -> FSerieEstructural b -> FParaleloEstructura
 foldCircuito fCaja fSerie fParalelo c = recCircuito fCaja (\c1 c2 r1 r2 -> fSerie r1 r2) (\cj1 c1 c2 cj2 r1 r2 -> fParalelo cj1 cj2 r1 r2) c
 
 -- 3 invertido
+invertido :: Circuito -> Circuito
+invertido c = foldCircuito fInvertirCaja fInvertirSerie fInvertirParalelo c
 
-invertido = undefined -- TODO: COMPLETAR
+fInvertirCaja :: Caja -> Circuito
+fInvertirCaja Nada = cajaNada
+fInvertirCaja (Bombilla True) = cajaOn
+fInvertirCaja (Bombilla False) = cajaOff
+
+fInvertirSerie :: Circuito -> Circuito -> Circuito
+fInvertirSerie c1 c2 = (Serie c2 c1)
+
+fInvertirParalelo :: Caja -> Caja -> Circuito -> Circuito -> Circuito
+fInvertirParalelo cj1 cj2 c1 c2 = (Paralelo cj2 c2 c1 cj1)
 
 -- 4: hayCaminoIluminado
 

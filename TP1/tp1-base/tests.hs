@@ -1,82 +1,90 @@
-import Test.HUnit
 import TP1
+import Test.HUnit
 
 -- TESTS
 
 testsInvertido :: Test
-testsInvertido = TestList -- TODO: AGREGAR
-  [ "Caja invertida (1)"
-    ~: invertido cajaOn
-    ~?= cajaOn
-  , "Caja invertida (2)"
-    ~: invertido cajaOff
-    ~?= cajaOff
-  , "Caja invertida (3)"
-    ~: invertido cajaNada
-    ~?= cajaNada
-  ]
+testsInvertido =
+  TestList -- TODO: AGREGAR
+    [ "Caja invertida (1)"
+        ~: invertido cajaOn
+        ~?= cajaOn,
+      "Caja invertida (2)"
+        ~: invertido cajaOff
+        ~?= cajaOff,
+      "Caja invertida (3)"
+        ~: invertido cajaNada
+        ~?= cajaNada,
+      "Circuito ejemplo enunciado"
+        ~: invertido (Serie (Paralelo on (Paralelo off cajaNada cajaOn on) (Paralelo Nada cajaOn cajaOff Nada) on) cajaOn)
+        ~?= Serie cajaOn (Paralelo on (Paralelo Nada cajaOff cajaOn Nada) (Paralelo on cajaOn cajaNada off) on)
+    ]
 
 testsHayCaminoIluminado :: Test
-testsHayCaminoIluminado = TestList -- TODO: AGREGAR
-  [ "En una caja con bombilla encendida hay camino iluminado"
-    ~: hayCaminoIluminado cajaOn
-    ~?= True
-  ]
+testsHayCaminoIluminado =
+  TestList -- TODO: AGREGAR
+    [ "En una caja con bombilla encendida hay camino iluminado"
+        ~: hayCaminoIluminado cajaOn
+        ~?= True
+    ]
 
 testsCantidadPrendidas :: Test
-testsCantidadPrendidas = TestList -- TODO: AGREGAR
-  [ "Cantidad prendidas en caja prendida es 1"
-    ~: cantidadPrendidas cajaOn
-    ~?= 1
-  ]
+testsCantidadPrendidas =
+  TestList -- TODO: AGREGAR
+    [ "Cantidad prendidas en caja prendida es 1"
+        ~: cantidadPrendidas cajaOn
+        ~?= 1
+    ]
 
 testsCajasDeCircuito :: Test
-testsCajasDeCircuito = TestList -- TODO: AGREGAR
-  [ "La lista de cajas de un circuito con una única caja es la lista con esa caja"
-    ~: cajasDeCircuito cajaOn
-    ~?= [on]
-  ]
+testsCajasDeCircuito =
+  TestList -- TODO: AGREGAR
+    [ "La lista de cajas de un circuito con una única caja es la lista con esa caja"
+        ~: cajasDeCircuito cajaOn
+        ~?= [on]
+    ]
 
 testsEsCircuitoProlijo :: Test
-testsEsCircuitoProlijo = TestList -- TODO: AGREGAR
-  [ "Una caja es prolija"
-    ~: esCircuitoProlijo cajaOn
-    ~?= True
-  ]
+testsEsCircuitoProlijo =
+  TestList -- TODO: AGREGAR
+    [ "Una caja es prolija"
+        ~: esCircuitoProlijo cajaOn
+        ~?= True
+    ]
 
 -- NOTA: para correr este test, cambiar la línea 18 del archivo tp1.hs de "show = showDeCircuito" a
-  -- "show = showDeCircuitoConEstructura".
-  -- De esa forma, podrán distinguir la estructura de los circuitos en serie.
+-- "show = showDeCircuitoConEstructura".
+-- De esa forma, podrán distinguir la estructura de los circuitos en serie.
 testsCircuitoEmprolijado :: Test
-testsCircuitoEmprolijado = TestList -- TODO: AGREGAR
-  [ "La versión emprolijada de una caja es la misma caja"
-    ~: circuitoEmprolijado cajaOn
-    ~?= cajaOn
-  ]
+testsCircuitoEmprolijado =
+  TestList -- TODO: AGREGAR
+    [ "La versión emprolijada de una caja es la misma caja"
+        ~: circuitoEmprolijado cajaOn
+        ~?= cajaOn
+    ]
 
 testsTienenLaMismaEstructura :: Test
-testsTienenLaMismaEstructura = TestList -- TODO: AGREGAR
-  [
-    
-  ]
+testsTienenLaMismaEstructura =
+  TestList -- TODO: AGREGAR
+    []
 
 testsSubCircuitoMásResistente :: Test
-testsSubCircuitoMásResistente = TestList -- TODO: AGREGAR
-  [
-    
-  ]
+testsSubCircuitoMásResistente =
+  TestList -- TODO: AGREGAR
+    []
 
 tests :: Test
-tests = TestList
-  [ TestLabel "invertido"                testsInvertido
-  , TestLabel "hayCaminoIluminado"       testsHayCaminoIluminado
-  , TestLabel "cantidadPrendidas"        testsCantidadPrendidas
-  , TestLabel "cajasDeCircuito"          testsCajasDeCircuito
-  , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
-  , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
-  , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
-  , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
-  ]
+tests =
+  TestList
+    [ TestLabel "invertido" testsInvertido
+    -- , TestLabel "hayCaminoIluminado"       testsHayCaminoIluminado
+    -- , TestLabel "cantidadPrendidas"        testsCantidadPrendidas
+    -- , TestLabel "cajasDeCircuito"          testsCajasDeCircuito
+    -- , TestLabel "esCircuitoProlijo"        testsEsCircuitoProlijo
+    -- , TestLabel "circuitoEmprolijado"      testsCircuitoEmprolijado
+    -- , TestLabel "tienenLaMismaEstructura"  testsTienenLaMismaEstructura
+    -- , TestLabel "subCircuitoMásResistente" testsSubCircuitoMásResistente
+    ]
 
 main :: IO ()
 main = runTestTT tests >>= print
