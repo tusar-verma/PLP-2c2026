@@ -345,8 +345,20 @@ cajaAlternada (cajaAlternada cj) = cj
 
   cajaAlternada (cajaAlternada Bombilla b)        {CAB}
 = cajaAlternada (Bombilla (not b))                {CAB}
-= Bombilla (not (not b))                          {Negación con negación se cancelan}
+= Bombilla (not (not b))                          {Lema2}
 = Bombilla b
+
+Demo de lema2: por inducción estructural en booleanos. Basta probar la propiedad para cada constructor booleano.
+
+-- qvq: ∀x :: Bool, not (not x) = x
+
+  not (not True)                  {NT}
+= not False                       {NF}
+= True
+
+  not (not False)                 {NF}
+= not True                        {NT}
+= False
 
 Para ambos constructores de Caja se obtiene la igualdad. Por lo tanto hemos demostrado el Lema1.
 
