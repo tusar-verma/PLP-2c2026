@@ -517,3 +517,470 @@ $$\sigma = \text{Bool} \to \sigma$$
 
 
 4. Sustituyendo una en otra, obtenemos la ecuación $\sigma = \sigma \to \tau$, la cual es imposible de satisfacer con tipos finitos porque el lado derecho tiene mayor tamaño sintáctico que el izquierdo.
+
+A continuación se presenta la resolución detallada y justificada de los **Ejercicios 11 al 15** de la Práctica N° 4, desarrollada paso a paso para servir como guía de estudio.
+
+---
+
+# Ejercicio 11 (Debilitamiento y fortalecimiento)
+
+**Consigna:** Demostrar las siguientes propiedades, procediendo por inducción en la derivación del juicio correspondiente, y dar un contraejemplo cuando se indique.
+
+### 1. Debilitamiento (*Weakening*)
+
+> **Propiedad a demostrar:** Si $\Gamma \vdash M : \sigma$ es un juicio de tipado derivable y $x$ es una variable que no aparece en $\Gamma$ ($x \notin \text{dom}(\Gamma)$), entonces $\Gamma, x : \tau \vdash M : \sigma$ es derivable para todo tipo $\tau$.
+> 
+> 
+
+Demostración por inducción en la estructura de la derivación de $\Gamma \vdash M : \sigma$:
+Analizamos los casos según la última regla de inferencia aplicada en la derivación de $\Gamma \vdash M : \sigma$:
+
+* **Casos base (Axiomas):**
+* **`T-True`, `T-False`, `T-Zero`:** El juicio es de la forma $\Gamma \vdash c : \sigma$ (donde $c \in \{\text{true}, \text{false}, \text{zero}\}$). Como estos axiomas son válidos en cualquier contexto bien formado y $x \notin \text{dom}(\Gamma)$, aplicando el mismo axioma sobre el contexto extendido obtenemos directamente $\Gamma, x : \tau \vdash c : \sigma$.
+* **`T-Var`:** El término es una variable $y$, es decir, $\Gamma \vdash y : \sigma$ con $(y : \sigma) \in \Gamma$. Como por hipótesis $x \notin \text{dom}(\Gamma)$, el contexto $\Gamma, x : \tau$ es válido (no repite variables) y sigue cumpliéndose que $(y : \sigma) \in (\Gamma, x : \tau)$. Aplicando `T-Var`, derivamos $\Gamma, x : \tau \vdash y : \sigma$.
+
+
+* **Casos inductivos:**
+* **`T-Succ`, `T-Pred`, `T-IsZero`:** Supongamos que la última regla es `T-Succ`, con premisa $\Gamma \vdash M_1 : \text{Nat}$ y conclusión $\Gamma \vdash \text{succ}(M_1) : \text{Nat}$. Por Hipótesis Inductiva (HI) aplicada a la derivación de la premisa (ya que $x \notin \text{dom}(\Gamma)$), es derivable $\Gamma, x : \tau \vdash M_1 : \text{Nat}$. Aplicando `T-Succ` a este juicio, obtenemos $\Gamma, x : \tau \vdash \text{succ}(M_1) : \text{Nat}$. *(Los casos `T-Pred` y `T-IsZero` son completamente análogos).*
+
+
+* **`T-If`:** La última regla tiene como premisas $\Gamma \vdash M_1 : \text{Bool}$, $\Gamma \vdash M_2 : \sigma$ y $\Gamma \vdash M_3 : \sigma$. Aplicando la HI a cada una de las tres subderivaciones, obtenemos que $\Gamma, x : \tau \vdash M_1 : \text{Bool}$, $\Gamma, x : \tau \vdash M_2 : \sigma$ y $\Gamma, x : \tau \vdash M_3 : \sigma$ son derivables. Aplicando `T-If`, concluimos $\Gamma, x : \tau \vdash \text{if } M_1 \text{ then } M_2 \text{ else } M_3 : \sigma$.
+* **`T-App`:** Las premisas son $\Gamma \vdash M_1 : \rho \to \sigma$ y $\Gamma \vdash M_2 : \rho$. Por HI en ambas premisas, son derivables $\Gamma, x : \tau \vdash M_1 : \rho \to \sigma$ y $\Gamma, x : \tau \vdash M_2 : \rho$. Aplicando `T-App`, concluimos $\Gamma, x : \tau \vdash M_1~M_2 : \sigma$.
+* **`T-Abs`:** El término es $\lambda y : \rho_1 . M_1$ con tipo $\sigma = \rho_1 \to \rho_2$, y la premisa de la derivación es $\Gamma, y : \rho_1 \vdash M_1 : \rho_2$.
+* Trabajando en $\Lambda_\alpha$ y por la **Hipótesis de Barendregt**, podemos asumir sin pérdida de generalidad que la variable ligada $y$ es distinta de $x$ ($y \neq x$) y $y \notin \text{dom}(\Gamma)$.
+
+
+* Como $x \notin \text{dom}(\Gamma)$ y $x \neq y$, entonces $x \notin \text{dom}(\Gamma, y : \rho_1)$.
+* Podemos aplicar la HI a la premisa para obtener que $\Gamma, y : \rho_1, x : \tau \vdash M_1 : \rho_2$ es derivable (como el contexto es un conjunto de pares, equivale a $\Gamma, x : \tau, y : \rho_1 \vdash M_1 : \rho_2$).
+* Aplicando `T-Abs`, concluimos $\Gamma, x : \tau \vdash \lambda y : \rho_1 . M_1 : \rho_1 \to \rho_2$. $\blacksquare$
+
+
+
+
+
+---
+
+### 2. Fortalecimiento (*Strengthening*)
+
+> **Propiedad a demostrar:** Si $\Gamma, x : \tau \vdash M : \sigma$ es un juicio de tipado derivable tal que $x$ no aparece libre en $M$ ($x \notin \text{fv}(M)$), entonces $\Gamma \vdash M : \sigma$ es derivable para todo tipo $\tau$.
+> 
+> 
+
+Demostración por inducción en la derivación de $\Gamma, x : \tau \vdash M : \sigma$:
+
+* **Casos base (Axiomas):**
+* **`T-True`, `T-False`, `T-Zero`:** No dependen de las variables del contexto, por lo que $\Gamma \vdash c : \sigma$ es derivable directamente por el mismo axioma.
+* **`T-Var`:** El término es $M = y$, por lo que $\Gamma, x : \tau \vdash y : \sigma$. El conjunto de variables libres es $\text{fv}(y) = \{y\}$. Como por hipótesis $x \notin \text{fv}(y)$, sabemos con certeza que $y \neq x$. Dado que $(y : \sigma) \in (\Gamma, x : \tau)$ y $y \neq x$, obligatoriamente $(y : \sigma) \in \Gamma$. Aplicando `T-Var`, derivamos $\Gamma \vdash y : \sigma$.
+
+
+* **Casos inductivos:**
+* **`T-Succ`, `T-Pred`, `T-IsZero`:** Sea $M = \text{succ}(M_1)$. Sabemos que $\text{fv}(\text{succ}(M_1)) = \text{fv}(M_1)$. Como $x \notin \text{fv}(M)$, entonces $x \notin \text{fv}(M_1)$. Aplicando la HI a la premisa $\Gamma, x : \tau \vdash M_1 : \text{Nat}$, obtenemos $\Gamma \vdash M_1 : \text{Nat}$ y por `T-Succ` concluimos $\Gamma \vdash \text{succ}(M_1) : \text{Nat}$. *(Análogo para `pred` e `isZero`).*
+
+
+* **`T-If`:** Sea $M = \text{if } M_1 \text{ then } M_2 \text{ else } M_3$. Como $\text{fv}(M) = \text{fv}(M_1) \cup \text{fv}(M_2) \cup \text{fv}(M_3)$ y $x \notin \text{fv}(M)$, entonces $x$ no aparece libre en ninguno de los tres subtérminos. Por HI en las tres premisas y aplicando `T-If`, se deriva $\Gamma \vdash \text{if } M_1 \text{ then } M_2 \text{ else } M_3 : \sigma$.
+
+
+* **`T-App`:** Sea $M = M_1~M_2$. Como $\text{fv}(M_1~M_2) = \text{fv}(M_1) \cup \text{fv}(M_2)$ y $x \notin \text{fv}(M_1~M_2)$, tenemos que $x \notin \text{fv}(M_1)$ y $x \notin \text{fv}(M_2)$. Aplicando la HI a ambas premisas de `T-App` y volviendo a aplicar `T-App`, obtenemos $\Gamma \vdash M_1~M_2 : \sigma$.
+
+
+* **`T-Abs`:** Sea $M = \lambda y : \rho_1 . M_1$ con $\sigma = \rho_1 \to \rho_2$. Por la Hipótesis de Barendregt, tomamos un representante donde la variable ligada $y$ cumpla $y \neq x$.
+
+
+* Recordemos que $\text{fv}(\lambda y : \rho_1 . M_1) = \text{fv}(M_1) \setminus \{y\}$.
+* Como $x \notin \text{fv}(\lambda y : \rho_1 . M_1)$ y además $x \neq y$, se deduce que $x \notin \text{fv}(M_1)$.
+* La premisa de la derivación es $\Gamma, x : \tau, y : \rho_1 \vdash M_1 : \rho_2$. Aplicando la HI sobre esta premisa (pues $x \notin \text{fv}(M_1)$), obtenemos que $\Gamma, y : \rho_1 \vdash M_1 : \rho_2$ es derivable.
+* Aplicando `T-Abs`, concluimos $\Gamma \vdash \lambda y : \rho_1 . M_1 : \rho_1 \to \rho_2$. $\blacksquare$
+
+
+
+
+
+---
+
+### 3. Contraejemplo para fortalecimiento cuando $x \in \text{fv}(M)$
+
+* **Contraejemplo:** Tomemos $\Gamma = \emptyset$, el término $M = x$ (donde claramente $x \in \text{fv}(x)$) y $\tau = \sigma = \text{Bool}$.
+* **Justificación:**
+* El juicio $x : \text{Bool} \vdash x : \text{Bool}$ **es derivable** en un paso mediante la regla `T-Var`.
+* Sin embargo, al quitar $x : \text{Bool}$ del contexto, el juicio resultante $\emptyset \vdash x : \text{Bool}$ **no es derivable**, ya que la variable $x$ queda libre sin estar declarada en el contexto vacío, haciendo imposible aplicar `T-Var`.
+
+
+
+---
+
+# Ejercicio 12 (Lema de sustitución)
+
+**Consigna:** Demostrar que si valen $\Gamma, x : \sigma \vdash M : \tau$ y $\Gamma \vdash N : \sigma$ entonces vale $\Gamma \vdash M\{x := N\} : \tau$. Sugerencia: proceder por inducción en la estructura del término $M$.
+
+Demostración por inducción estructural en $M$:
+
+1. **Caso $M = \text{true}$, $M = \text{false}$ o $M = \text{zero}$:**
+* Por definición de sustitución, $c\{x := N\} = c$ (para $c \in \{\text{true}, \text{false}, \text{zero}\}$).
+* Como $\Gamma, x : \sigma \vdash c : \tau$ solo puede haberse derivado por el axioma correspondiente (`T-True`, `T-False` o `T-Zero`), aplicando el mismo axioma sobre $\Gamma$ obtenemos $\Gamma \vdash c : \tau$.
+
+
+2. Caso $M = y$ (una variable):
+Subdividimos en dos casos según si $y$ es o no la variable $x$:
+
+
+* **Subcaso $y = x$:**
+* Por definición de sustitución, $x\{x := N\} = N$.
+* Como $\Gamma, x : \sigma \vdash x : \tau$ proviene únicamente de la regla `T-Var`, y en un contexto cada variable tiene un único tipo asignado, debe cumplirse que $\tau = \sigma$.
+* Queremos ver que $\Gamma \vdash N : \tau$, es decir, $\Gamma \vdash N : \sigma$, lo cual vale exactamente por nuestra segunda hipótesis del enunciado.
+
+
+
+
+* **Subcaso $y \neq x$:**
+* Por definición de sustitución, $y\{x := N\} = y$.
+* Como $x \notin \text{fv}(y)$ y tenemos $\Gamma, x : \sigma \vdash y : \tau$, por la propiedad de **Fortalecimiento** (demostrada en el Ejercicio 11.2) obtenemos directamente $\Gamma \vdash y : \tau$.
+
+
+
+
+
+
+3. Caso $M = \text{succ}(M_1)$ (análogo para $\text{pred}(M_1)$ e $\text{isZero}(M_1)$):
+
+
+* Por definición de sustitución, $(\text{succ}(M_1))\{x := N\} = \text{succ}(M_1\{x := N\})$.
+* La única regla para tipar $\text{succ}(M_1)$ es `T-Succ`, por lo que $\tau = \text{Nat}$ y su premisa es $\Gamma, x : \sigma \vdash M_1 : \text{Nat}$.
+
+
+* Por Hipótesis Inductiva sobre $M_1$, vale $\Gamma \vdash M_1\{x := N\} : \text{Nat}$.
+* Aplicando `T-Succ`, concluimos $\Gamma \vdash \text{succ}(M_1\{x := N\}) : \text{Nat}$.
+
+
+
+
+4. Caso $M = \text{if } M_1 \text{ then } M_2 \text{ else } M_3$:
+
+
+* Por definición de sustitución, $(\text{if } M_1 \text{ then } M_2 \text{ else } M_3)\{x := N\} = \text{if } M_1\{x := N\} \text{ then } M_2\{x := N\} \text{ else } M_3\{x := N\}$.
+* La derivación de $\Gamma, x : \sigma \vdash M : \tau$ debe terminar con `T-If`, cuyas premisas son $\Gamma, x : \sigma \vdash M_1 : \text{Bool}$, $\Gamma, x : \sigma \vdash M_2 : \tau$ y $\Gamma, x : \sigma \vdash M_3 : \tau$.
+* Aplicando la HI a $M_1, M_2$ y $M_3$, obtenemos $\Gamma \vdash M_1\{x := N\} : \text{Bool}$, $\Gamma \vdash M_2\{x := N\} : \tau$ y $\Gamma \vdash M_3\{x := N\} : \tau$.
+* Aplicando `T-If`, concluimos $\Gamma \vdash (\text{if } M_1 \text{ then } M_2 \text{ else } M_3)\{x := N\} : \tau$.
+
+
+5. Caso $M = M_1~M_2$ (Aplicación):
+
+
+* Por definición de sustitución, $(M_1~M_2)\{x := N\} = (M_1\{x := N\})~(M_2\{x := N\})$.
+* La derivación de $\Gamma, x : \sigma \vdash M_1~M_2 : \tau$ debe provenir de `T-App`, por lo que existe un tipo $\rho$ tal que valen las premisas $\Gamma, x : \sigma \vdash M_1 : \rho \to \tau$ y $\Gamma, x : \sigma \vdash M_2 : \rho$.
+* Por HI en $M_1$ y en $M_2$, valen $\Gamma \vdash M_1\{x := N\} : \rho \to \tau$ y $\Gamma \vdash M_2\{x := N\} : \rho$.
+* Aplicando `T-App`, obtenemos $\Gamma \vdash (M_1~M_2)\{x := N\} : \tau$.
+
+
+6. Caso $M = \lambda y : \rho_1 . M_1$ (Abstracción):
+
+
+* Por la **Hipótesis de Barendregt** (trabajando en $\Lambda_\alpha$), elegimos un representante de la clase de equivalencia donde la variable ligada $y$ sea distinta de $x$ ($y \neq x$), no pertenezca a $\text{fv}(N)$ y no aparezca en $\Gamma$ ($y \notin \text{dom}(\Gamma)$).
+
+
+* Con esto, la sustitución entra sin captura: $(\lambda y : \rho_1 . M_1)\{x := N\} = \lambda y : \rho_1 . (M_1\{x := N\})$.
+
+
+* Como $\Gamma, x : \sigma \vdash \lambda y : \rho_1 . M_1 : \tau$ proviene de `T-Abs`, tenemos que $\tau = \rho_1 \to \rho_2$ y la premisa es $\Gamma, y : \rho_1, x : \sigma \vdash M_1 : \rho_2$.
+* Por otro lado, como tenemos $\Gamma \vdash N : \sigma$ y $y \notin \text{dom}(\Gamma)$, por la propiedad de **Debilitamiento** (demostrada en el Ejercicio 11.1) sabemos que es derivable $\Gamma, y : \rho_1 \vdash N : \sigma$.
+
+
+* Ahora podemos aplicar la Hipótesis Inductiva sobre $M_1$ (tomando como contexto base $\Gamma' = \Gamma, y : \rho_1$), de donde deducimos que $\Gamma, y : \rho_1 \vdash M_1\{x := N\} : \rho_2$ es derivable.
+* Finalmente, aplicando `T-Abs`, obtenemos $\Gamma \vdash \lambda y : \rho_1 . (M_1\{x := N\}) : \rho_1 \to \rho_2$. $\blacksquare$
+
+
+
+---
+
+# Ejercicio 13 ⋆ (Semántica: Sustitución y $\alpha$-renombre)
+
+**Consigna:** Sean $\sigma, \tau, \rho$ tipos. Según la definición de sustitución, calcular las expresiones renombrando variables en ambos términos para que las sustituciones no cambien su significado (evitar captura de variables libres).
+
+> **Recordatorio teórico:** Al sustituir $\{x := N\}$ dentro de una abstracción $\lambda z . M$, si $z = x$ la sustitución se detiene porque $x$ está ligada localmente; si $z \neq x$ pero $z \in \text{fv}(N)$, debemos renombrar la variable ligada $z$ por una variable fresca mediante $\alpha$-equivalencia ($\lambda z.M =_\alpha \lambda w.M\{z := w\}$) antes de meter la sustitución adentro, para no capturar la ocurrencia libre de $z$ en $N$.
+> 
+> 
+
+---
+
+### a) $(\lambda y : \sigma. x (\lambda x : \tau. x))\{x := (\lambda y : \rho. x~y)\}$
+
+1. **Análisis de variables libres del término a sustituir:**
+Sea $N = \lambda y : \rho. x~y$. Su conjunto de variables libres es $\text{fv}(N) = \{x\}$ (pues $y$ está ligada por $\lambda y : \rho$).
+2. **Revisión de captura y $\alpha$-renombre:**
+* En el término principal $\lambda y : \sigma. x (\lambda x : \tau. x)$, el ligador externo es $\lambda y : \sigma$. Como $y \notin \text{fv}(N)$ (pues $\text{fv}(N) = \{x\}$), el ligador $\lambda y : \sigma$ **no captura** ninguna variable libre de $N$.
+* Sin embargo, para cumplir con la **Hipótesis de Barendregt** (que todas las variables ligadas sean distintas entre sí y de las libres) y evitar cualquier confusión visual entre los distintos ligadores, renombramos las variables ligadas en ambos términos:
+
+
+* En el término izquierdo, renombramos la $x$ ligada interna por $z$: $\lambda y : \sigma. x (\lambda z : \tau. z)$.
+
+
+* En el término derecho $N$, renombramos la $y$ ligada por $w$: $\lambda w : \rho. x~w$.
+
+
+
+
+
+
+3. **Cálculo paso a paso de la sustitución:**
+
+$$(\lambda y : \sigma. x (\lambda z : \tau. z))\{x := (\lambda w : \rho. x~w)\}$$
+
+
+* Bajamos dentro de $\lambda y : \sigma$ (pues $y \neq x$ e $y \notin \text{fv}(\lambda w : \rho. x~w)$):
+
+$$= \lambda y : \sigma. (x (\lambda z : \tau. z))\{x := (\lambda w : \rho. x~w)\}$$
+
+
+* Distribuimos en la aplicación:
+
+$$= \lambda y : \sigma. (x\{x := (\lambda w : \rho. x~w)\}) ((\lambda z : \tau. z)\{x := (\lambda w : \rho. x~w)\})$$
+
+
+* En el hijo izquierdo, $x\{x := N\} = N$. En el hijo derecho, como $x$ no aparece libre en $\lambda z : \tau. z$ (en la versión original era $\lambda x : \tau. x$ donde $x$ estaba ligada, por lo que la sustitución tampoco hacía nada), queda intacto:
+
+$$= \lambda y : \sigma. (\lambda w : \rho. x~w) (\lambda z : \tau. z)$$
+
+
+
+(Que es $\alpha$-equivalente a $\lambda y : \sigma. (\lambda y : \rho. x~y) (\lambda x : \tau. x)$).
+
+
+
+
+
+---
+
+### b) $(y (\lambda v : \sigma. x~v))\{x := (\lambda y : \tau. v~y)\}$
+
+1. **Análisis de variables libres y peligro de captura:**
+* Sea $N = \lambda y : \tau. v~y$. Sus variables libres son $\text{fv}(N) = \{v\}$ (ya que $y$ está ligada).
+* En el término principal $y (\lambda v : \sigma. x~v)$, aparece la abstracción $\lambda v : \sigma. x~v$, la cual liga la variable **$v$** y adentro tiene una ocurrencia libre de $x$.
+* ¡Atención! Si hiciéramos un reemplazo ingenuo sin renombrar, al meter $N$ en lugar de $x$ dentro de $\lambda v : \sigma$, la variable libre $v$ de $N$ quedaría **capturada** por el ligador $\lambda v : \sigma$, cambiando el significado del término.
+
+
+
+
+2. **$\alpha$-renombre previo:**
+* Aplicamos $\alpha$-equivalencia sobre $\lambda v : \sigma. x~v$ renombrando la variable ligada $v$ por una variable fresca $z$ ($z \notin \{x, y, v\}$):
+
+
+
+$$\lambda v : \sigma. x~v =_\alpha \lambda z : \sigma. x~z$$
+
+
+* También podemos renombrar la variable ligada $y$ en $N$ por $w$ para cumplir Barendregt respecto de la $y$ libre externa:
+
+
+
+$$\lambda y : \tau. v~y =_\alpha \lambda w : \tau. v~w$$
+
+
+
+
+3. **Cálculo paso a paso de la sustitución:**
+
+$$(y (\lambda z : \sigma. x~z))\{x := (\lambda w : \tau. v~w)\}$$
+
+
+* Distribuimos en la aplicación principal:
+
+$$= (y\{x := (\lambda w : \tau. v~w)\}) ((\lambda z : \sigma. x~z)\{x := (\lambda w : \tau. v~w)\})$$
+
+
+* A la izquierda, $y\{x := N\} = y$ (pues $y \neq x$). A la derecha, como $z \neq x$ y $z \notin \text{fv}(\lambda w : \tau. v~w) = \{v\}$, la sustitución ingresa al cuerpo de la abstracción:
+
+$$= y (\lambda z : \sigma. (x~z)\{x := (\lambda w : \tau. v~w)\})$$
+
+
+* Distribuimos en la aplicación $(x~z)$:
+
+$$= y (\lambda z : \sigma. (x\{x := (\lambda w : \tau. v~w)\}) (z\{x := (\lambda w : \tau. v~w)\}))$$
+
+
+* Evaluamos las hojas ($x\{x := N\} = N$ y $z\{x := N\} = z$):
+
+$$= y (\lambda z : \sigma. (\lambda w : \tau. v~w)~z)$$
+
+
+
+
+
+---
+
+# Ejercicio 14 (Conmutación de sustituciones)
+
+**Consigna:** Sean $M, N$ y $P$ términos del cálculo-$\lambda$.
+
+* **a)** Por inducción en la estructura del término $M$, demostrar que si $x \notin \text{fv}(P)$ y $x \neq y$, entonces:
+
+
+
+$$M\{x := N\}\{y := P\} = M\{y := P\}\{x := N\{y := P\}\}$$
+
+
+* **b)** Dar un contraejemplo cuando $x$ aparece libre en $P$.
+
+
+
+---
+
+### a) Demostración por inducción en la estructura de $M$
+
+* **Caso 1: $M$ es una constante ($c \in \{\text{true}, \text{false}, \text{zero}\}$):**
+* Lado izquierdo: $c\{x := N\}\{y := P\} = c\{y := P\} = c$.
+* Lado derecho: $c\{y := P\}\{x := N\{y := P\}\} = c\{x := N\{y := P\}\} = c$. Coinciden.
+
+
+* Caso 2: $M$ es una variable $z$:
+Analizamos los tres subcasos posibles para la variable $z$:
+
+
+* **Subcaso 2.1 ($z = x$):** (Recordemos que como $x \neq y$, entonces $z \neq y$).
+
+
+* Lado izquierdo: $x\{x := N\}\{y := P\} = N\{y := P\}$.
+* Lado derecho: $x\{y := P\}\{x := N\{y := P\}\} = x\{x := N\{y := P\}\} = N\{y := P\}$. Coinciden.
+
+
+* **Subcaso 2.2 ($z = y$):** (Como $x \neq y$, entonces $z \neq x$).
+
+
+* Lado izquierdo: $y\{x := N\}\{y := P\} = y\{y := P\} = P$.
+* Lado derecho: $y\{y := P\}\{x := N\{y := P\}\} = P\{x := N\{y := P\}\}$.
+* ¡Acá usamos la hipótesis clave del enunciado! Como **$x \notin \text{fv}(P)$**, sustituir $x$ en $P$ no altera a $P$, es decir: $P\{x := N\{y := P\}\} = P$. Por lo tanto, ambos lados dan $P$ y coinciden.
+
+
+
+
+* **Subcaso 2.3 ($z \neq x$ y $z \neq y$):**
+* Lado izquierdo: $z\{x := N\}\{y := P\} = z\{y := P\} = z$.
+* Lado derecho: $z\{y := P\}\{x := N\{y := P\}\} = z\{x := N\{y := P\}\} = z$. Coinciden.
+
+
+
+
+* Caso 3: $M = M_1~M_2$ (Aplicación):
+
+
+* Como la sustitución distribuye sobre la aplicación:
+
+$$(M_1~M_2)\{x := N\}\{y := P\} = (M_1\{x := N\}\{y := P\})~(M_2\{x := N\}\{y := P\})$$
+
+
+* Aplicando la Hipótesis Inductiva a $M_1$ y a $M_2$:
+
+$$= (M_1\{y := P\}\{x := N\{y := P\}\})~(M_2\{y := P\}\{x := N\{y := P\}\})$$
+
+
+$$= (M_1~M_2)\{y := P\}\{x := N\{y := P\}\}$$
+
+
+
+*(Los casos de constructores `succ`, `pred`, `isZero` e `if` son idénticos porque la sustitución simplemente se distribuye a sus subtérminos y se aplica la HI).*
+
+
+* Caso 4: $M = \lambda z : \tau . M_1$ (Abstracción):
+
+
+* Por la **Hipótesis de Barendregt** (trabajando en $\Lambda_\alpha$), elegimos un representante de $\lambda z : \tau . M_1$ tal que la variable ligada $z$ sea fresca: $z \neq x$, $z \neq y$, $z \notin \text{fv}(N)$ y $z \notin \text{fv}(P)$. (Notar que esto también implica que $z \notin \text{fv}(N\{y := P\})$).
+
+
+* Gracias a esto, todas las sustituciones ingresan limpiamente dentro de la abstracción $\lambda z : \tau$:
+
+
+
+$$(\lambda z : \tau . M_1)\{x := N\}\{y := P\} = \lambda z : \tau . (M_1\{x := N\}\{y := P\})$$
+
+
+* Aplicando la Hipótesis Inductiva sobre el subtérmino $M_1$:
+
+$$= \lambda z : \tau . (M_1\{y := P\}\{x := N\{y := P\}\})$$
+
+
+$$= (\lambda z : \tau . M_1)\{y := P\}\{x := N\{y := P\}\} \quad \blacksquare$$
+
+
+
+
+
+---
+
+### b) Contraejemplo cuando $x \in \text{fv}(P)$
+
+Para romper la igualdad en el Subcaso 2.2, basta elegir $M = y$ y hacer que $P$ contenga a $x$ libre:
+
+* **Elección de términos:** Sean $M = y$, $N = \text{zero}$ y $P = x$ (con $x \neq y$). Aquí claramente $x \in \text{fv}(P) = \{x\}$.
+* **Evaluación del lado izquierdo:**
+
+$$M\{x := N\}\{y := P\} = y\{x := \text{zero}\}\{y := x\} = y\{y := x\} = x$$
+
+
+* **Evaluación del lado derecho:**
+
+$$M\{y := P\}\{x := N\{y := P\}\} = y\{y := x\}\{x := \text{zero}\{y := x\}\} = x\{x := \text{zero}\} = \text{zero}$$
+
+
+* Como $x \neq \text{zero}$, ambos lados dan resultados distintos y la propiedad no se cumple.
+
+---
+
+# Ejercicio 15 (Valores) ⋆
+
+**Consigna:** Dado el conjunto de valores visto en clase:
+
+
+$$V ::= \lambda x : \tau. M \mid \text{true} \mid \text{false} \mid \text{zero} \mid \text{succ}(V)$$
+
+
+Determinar si cada una de las siguientes expresiones es o no un valor.
+
+> **Criterio clave:** La gramática de valores indica que toda abstracción $\lambda x : \tau. M$ **es un valor sin importar qué término $M$ tenga en su cuerpo** (porque en nuestra estrategia de reducción *call-by-value* no se evalúa debajo del $\lambda$). En cambio, $\text{succ}(M)$ solo es un valor si lo que tiene adentro es a su vez un valor numérico $V$.
+> 
+> 
+
+* **a) $(\lambda x : \text{Bool}. x) \text{ true}$**
+
+* **NO es un valor.** Es una **aplicación** ($M_1~M_2$), y las aplicaciones no forman parte de la gramática de valores $V$ (de hecho, es un *redex* que puede reducirse a `true`).
+
+
+
+
+* **b) $\lambda x : \text{Bool}. \underline{2}$** *(donde $\underline{2}$ abrevia $\text{succ(succ(zero))}$)*
+
+* **SÍ es un valor.** Tiene la forma sintáctica de una abstracción $\lambda x : \tau. M$, la cual pertenece directamente a la producción $V ::= \lambda x : \tau. M$.
+
+
+
+
+* **c) $\lambda x : \text{Bool}. \text{pred}(\underline{2})$**
+
+* **SÍ es un valor.** Aunque su cuerpo $\text{pred}(\underline{2})$ contiene una operación que aún no fue reducida, la expresión completa en su raíz es una **abstracción** ($\lambda x : \tau. M$). Según la gramática $V ::= \lambda x : \tau. M$, el cuerpo $M$ puede ser cualquier término arbitrario sin necesidad de ser un valor.
+
+
+
+
+* **d) $\lambda y : \text{Nat}. (\lambda x : \text{Bool}. \text{pred}(\underline{2})) \text{ true}$**
+
+* **SÍ es un valor.** Por la misma razón que el inciso anterior: el constructor más externo de la expresión es una **abstracción** $\lambda y : \text{Nat}. M$ (con $M = (\lambda x : \text{Bool}. \text{pred}(\underline{2})) \text{ true}$).
+
+
+
+
+* **e) $x$**
+
+* **NO es un valor.** Las variables no están incluidas en la gramática de los valores $V$.
+
+
+
+
+* **f) $\text{succ(succ(zero))}$**
+
+* **SÍ es un valor.** Lo verificamos recursivamente con la gramática de $V$:
+
+
+1. $\text{zero}$ es un valor ($V$) por caso base.
+
+
+2. Como $\text{zero}$ es un valor, $\text{succ(zero)}$ es un valor por la regla $\text{succ}(V)$.
+
+
+3. Como $\text{succ(zero)}$ es un valor, $\text{succ(succ(zero))}$ también es un valor por la regla $\text{succ}(V)$.
