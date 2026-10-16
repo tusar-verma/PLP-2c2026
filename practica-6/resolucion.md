@@ -669,3 +669,277 @@ $$\kappa_{11} = \{\} \quad (\text{Cláusula vacía } \bot)$$
 Mediante el algoritmo de resolución se derivó la cláusula vacía ($\mathcal{C}_0 \vdash \{\}$), lo que demuestra que el conjunto de cláusulas obtenido a partir de la negación de la fórmula es **insatisfactible**.
 
 Por el principio de refutación, se concluye formalmente que la fórmula original $\sigma$ es una **tautología** (válida en toda interpretación), confirmando que el pronóstico efectivamente se equivocó.
+
+
+Aquí tenés la resolución completa y detallada de los **Ejercicios 5, 6, 7 y 8** de la **Práctica 6 (Lógica y Resolución)**, con todas las justificaciones paso a paso para que puedas copiarlas a tus notas.
+
+---
+
+# Sintaxis de la Lógica de Primer Orden (LPO)
+
+---
+
+# Ejercicio 5
+
+Dado el conjunto de símbolos de función $\mathcal{F} = \{d, f, g\}$ con sus respectivas aridades:
+
+* $d$: constante (aridad 0)
+* $f$: función binaria (aridad 2)
+* $g$: función ternaria (aridad 3)
+
+### Definición formal de término sobre $\mathcal{F}$:
+
+1. Toda variable $X, Y, Z, \dots$ es un término.
+2. Toda constante (función de aridad 0) es un término.
+3. Si $h \in \mathcal{F}$ tiene aridad $n \ge 1$ y $t_1, \dots, t_n$ son términos, entonces $h(t_1, \dots, t_n)$ es un término.
+
+---
+
+### Análisis de las cadenas:
+
+* **I. $g(d, d)$**
+* **Respuesta:** **NO es un término.**
+* **Justificación:** El símbolo $g$ fue definido con aridad 3 (requiere 3 argumentos), pero en esta expresión recibe únicamente 2 argumentos ($d$ y $d$).
+
+
+* **II. $g(X, f(d, Z), d)$**
+* **Respuesta:** **SÍ es un término.**
+* **Justificación:**
+1. $X$ y $Z$ son variables (términos).
+2. $d$ es una constante (término).
+3. $f(d, Z)$ es un término válido porque $f$ (aridad 2) recibe 2 términos ($d$ y $Z$).
+4. $g$ (aridad 3) recibe 3 términos válidos: $X$, $f(d, Z)$ y $d$.
+
+
+
+
+* **III. $f(X, g(Y, Z), d)$**
+* **Respuesta:** **NO es un término.**
+* **Justificación:** Viola dos reglas de aridad:
+1. $g$ (aridad 3) recibe solo 2 argumentos ($Y, Z$).
+2. $f$ (aridad 2) recibe 3 argumentos ($X$, $g(Y,Z)$, $d$).
+
+
+
+
+* **IV. $g(X, h(Y, Z), d)$**
+* **Respuesta:** **NO es un término sobre $\mathcal{F}$.**
+* **Justificación:** El símbolo de función $h$ no pertenece al alfabeto dado $\mathcal{F} = \{d, f, g\}$.
+
+
+* **V. $f(f(g(d, X), f(g(d, X), Y, g(Y, d)), g(d, d)), g(f(d, d, X), d), Z)$**
+* **Respuesta:** **NO es un término.**
+* **Justificación:** Múltiples subexpresiones violan las aridades:
+1. $g(d, X)$, $g(Y, d)$ y $g(d, d)$ pasan solo 2 argumentos a $g$ (requiere 3).
+2. $f(d, d, X)$ pasa 3 argumentos a $f$ (requiere 2).
+3. El símbolo $f$ más externo recibe 3 argumentos principales.
+
+
+
+
+
+---
+
+# Ejercicio 6
+
+Dados los símbolos:
+
+* $c$: constante
+* $f$: función de aridad 1
+* $S, B$: predicados binarios (aridad 2)
+
+### Definición formal de fórmula en LPO:
+
+1. Si $P$ es un predicado de aridad $n$ y $t_1, \dots, t_n$ son términos, entonces $P(t_1, \dots, t_n)$ es una **fórmula atómica**.
+2. Si $\phi, \psi$ son fórmulas, entonces $\neg \phi$, $(\phi \wedge \psi)$, $(\phi \vee \psi)$, $(\phi \Rightarrow \psi)$ y $(\phi \Leftrightarrow \psi)$ son fórmulas.
+3. Si $\phi$ es una fórmula y $X$ es una variable, $\forall X . \phi$ y $\exists X . \phi$ son fórmulas.
+
+---
+
+### Análisis de las cadenas:
+
+* **I. $S(c, X)$**
+* **Respuesta:** **SÍ es fórmula.** (Fórmula atómica: el predicado $S$ de aridad 2 se aplica sobre la constante $c$ y la variable $X$).
+
+
+* **II. $B(c, f(c))$**
+* **Respuesta:** **SÍ es fórmula.** (Fórmula atómica: el predicado $B$ se aplica a los términos válidos $c$ y $f(c)$).
+
+
+* **III. $f(c)$**
+* **Respuesta:** **NO es fórmula.** Es un **término** (denota un objeto del dominio, no una afirmación que pueda ser verdadera o falsa).
+
+
+* **IV. $B(B(c, X), Y)$**
+* **Respuesta:** **NO es fórmula.** Los predicados deben tomar **términos** como argumentos. $B(c, X)$ es una fórmula, no un término.
+
+
+* **V. $S(B(c), Z)$**
+* **Respuesta:** **NO es fórmula.** $B(c)$ es un predicado de aridad 2 mal aplicado (recibe 1 solo argumento) y además no es un término.
+
+
+* **VI. $(B(X, Y) \Rightarrow (\exists Z . S(Z, Y)))$**
+* **Respuesta:** **SÍ es fórmula.** Es una implicación bien formada entre la atómica $B(X, Y)$ y la fórmula cuantificada $\exists Z . S(Z, Y)$.
+
+
+* **VII. $(S(X, Y) \Rightarrow S(Y, f(f(X))))$**
+* **Respuesta:** **SÍ es fórmula.** Implicación entre dos fórmulas atómicas válidas.
+
+
+* **VIII. $B(X, Y) \Rightarrow f(X)$**
+* **Respuesta:** **NO es fórmula.** El conectivo $\Rightarrow$ debe unir dos fórmulas. $f(X)$ es un término.
+
+
+* **IX. $S(X, f(Y)) \wedge B(X, Y)$**
+* **Respuesta:** **SÍ es fórmula.** Conjunción de dos fórmulas atómicas.
+
+
+* **X. $\forall X . B(X, f(X))$**
+* **Respuesta:** **SÍ es fórmula.** Cuantificación universal sobre una fórmula atómica válida.
+
+
+* **XI. $\exists X . B(Y, X(c))$**
+* **Respuesta:** **NO es fórmula.** $X(c)$ intenta usar la variable $X$ como un símbolo de función.
+
+
+
+---
+
+# Ejercicio 7
+
+Dada la fórmula:
+
+
+$$\sigma = ((\exists X . P(Y, Z)) \wedge \forall Y . \neg Q(Y, X)) \vee P(Y, Z)$$
+
+---
+
+### I. Variables libres y ligadas
+
+* **Ocurrencias de variables:**
+* En $\exists X . P(Y, Z)$: $X$ está **ligada** por $\exists X$; $Y$ y $Z$ están **libres**.
+* En $\forall Y . \neg Q(Y, X)$: $Y$ está **ligada** por $\forall Y$; $X$ está **libre** (no cae bajo la influencia de $\exists X$ de la subfórmula izquierda).
+* En el $P(Y, Z)$ final: $Y$ y $Z$ están **libres**.
+
+
+* **Conjunto de variables libres:**
+
+$$\text{Libres}(\sigma) = \{X, Y, Z\}$$
+
+
+* **Conjunto de variables ligadas:**
+
+$$\text{Ligadas}(\sigma) = \{X, Y\}$$
+
+
+
+---
+
+### II. Cálculo de sustituciones
+
+> **Regla formal:** La sustitución $\sigma\{V := t\}$ actúa únicamente sobre las **ocurrencias libres** de $V$. Si al sustituir surge una captura no deseada de variables del término $t$ por cuantificadores de $\sigma$, se debe **renombrar la variable ligada** (Alfa-conversión) por una variable fresca.
+
+1. **$\sigma\{X := W\}$:**
+Sustituye únicamente la ocurrencia libre de $X$ (en $\neg Q(Y, X)$):
+
+$$\sigma\{X := W\} = ((\exists X . P(Y, Z)) \wedge \forall Y . \neg Q(Y, W)) \vee P(Y, Z)$$
+
+
+2. **$\sigma\{Y := W\}$:**
+Sustituye las ocurrencias libres de $Y$ (en $\exists X . P(Y, Z)$ y en $P(Y, Z)$):
+
+$$\sigma\{Y := W\} = ((\exists X . P(W, Z)) \wedge \forall Y . \neg Q(Y, X)) \vee P(W, Z)$$
+
+
+3. **$\sigma\{Y := f(X)\}$:**
+Sustituye las ocurrencias libres de $Y$ por el término $f(X)$.
+* *Atención:* En la subfórmula $\exists X . P(Y, Z)$, sustituir $Y$ por $f(X)$ provocaría que la variable $X$ quede **capturada** por el cuantificador $\exists X$.
+* Se renombra la variable ligada $X$ a una variable fresca $X'$:
+
+$$\sigma\{Y := f(X)\} = ((\exists X' . P(f(X), Z)) \wedge \forall Y . \neg Q(Y, X)) \vee P(f(X), Z)$$
+
+
+
+
+4. **$\sigma\{Z := g(Y, Z)\}$:**
+Sustituye las ocurrencias libres de $Z$ por $g(Y, Z)$. No hay capturas de variables:
+
+$$\sigma\{Z := g(Y, Z)\} = ((\exists X . P(Y, g(Y, Z))) \wedge \forall Y . \neg Q(Y, X)) \vee P(Y, g(Y, Z))$$
+
+
+
+---
+
+# Ejercicio 8
+
+Dada la fórmula:
+
+
+$$\sigma = (\exists X . \forall Y . P(X, Y, Z)) \wedge \forall Z . P(X, Y, Z)$$
+
+---
+
+### I. Variables libres y ligadas
+
+* **En $(\exists X . \forall Y . P(X, Y, Z))$:** $X$ e $Y$ están **ligadas**; $Z$ está **libre**.
+* **En $\forall Z . P(X, Y, Z)$:** $X$ e $Y$ están **libres**; $Z$ está **ligada**.
+* **Variables libres:** $\text{Libres}(\sigma) = \{X, Y, Z\}$
+* **Variables ligadas:** $\text{Ligadas}(\sigma) = \{X, Y, Z\}$
+
+---
+
+### II. Sustituciones individuales con $t = g(f(Y), Y)$
+
+1. **$\sigma\{X := t\}$:**
+Reemplaza la ocurrencia libre de $X$ (en el segundo conjuncto):
+
+$$\sigma\{X := t\} = (\exists X . \forall Y . P(X, Y, Z)) \wedge \forall Z . P(g(f(Y), Y), Y, Z)$$
+
+
+2. **$\sigma\{Y := t\}$:**
+Reemplaza la ocurrencia libre de $Y$ (en el segundo conjuncto):
+
+$$\sigma\{Y := t\} = (\exists X . \forall Y . P(X, Y, Z)) \wedge \forall Z . P(X, g(f(Y), Y), Z)$$
+
+
+3. **$\sigma\{Z := t\}$:**
+Reemplaza la ocurrencia libre de $Z$ (en el primer conjuncto).
+* *Atención:* Para evitar que la variable $Y$ del término $t$ sea capturada por $\forall Y$, se renombra la variable ligada $Y$ por $Y'$:
+
+$$\sigma\{Z := t\} = (\exists X . \forall Y' . P(X, Y', g(f(Y), Y))) \wedge \forall Z . P(X, Y, Z)$$
+
+
+
+
+
+---
+
+### III. Sustitución simultánea $\sigma\{X := t, Y := t, Z := t\}$ con $t = g(f(Y), Y)$
+
+Reemplaza de forma simultánea todas las ocurrencias libres de $X, Y, Z$ por $t$ (renombrando la variable ligada $Y$ a $Y'$ en la primera parte para evitar captura):
+
+$$\sigma\{X := t, Y := t, Z := t\} = (\exists X . \forall Y' . P(X, Y', g(f(Y), Y))) \wedge \forall Z . P(g(f(Y), Y), g(f(Y), Y), Z)$$
+
+---
+
+### IV. Composición de sustituciones $\sigma(\{X := t\} \circ \{Y := t\} \circ \{Z := t\})$
+
+Por definición, la composición de sustituciones $(\theta_1 \circ \theta_2 \circ \theta_3)$ aplicada a una fórmula equivale a aplicar secuencialmente de derecha a izquierda:
+
+$$\sigma((\theta_1 \circ \theta_2) \circ \theta_3) = ((\sigma \theta_1) \theta_2) \theta_3$$
+
+1. **Paso 1: Aplicar $\{Z := t\}$ a $\sigma$:**
+
+$$\sigma_1 = \sigma\{Z := t\} = (\exists X . \forall Y' . P(X, Y', g(f(Y), Y))) \wedge \forall Z . P(X, Y, Z)$$
+
+
+2. **Paso 2: Aplicar $\{Y := t\}$ a $\sigma_1$:**
+Reemplaza las ocurrencias libres de $Y$ (tanto en la $Y$ libre del segundo conjuncto como en el término $t$ introducido en el paso anterior):
+
+$$\sigma_2 = \sigma_1\{Y := t\} = (\exists X . \forall Y' . P(X, Y', g(f(g(f(Y), Y)), g(f(Y), Y)))) \wedge \forall Z . P(X, g(f(Y), Y), Z)$$
+
+
+3. **Paso 3: Aplicar $\{X := t\}$ a $\sigma_2$:**
+Reemplaza la ocurrencia libre de $X$ en el segundo conjuncto por $t$:
+
+$$\sigma_3 = \sigma_2\{X := t\} = (\exists X . \forall Y' . P(X, Y', g(f(g(f(Y), Y)), g(f(Y), Y)))) \wedge \forall Z . P(g(f(Y), Y), g(f(Y), Y), Z)$$
