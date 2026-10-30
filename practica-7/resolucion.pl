@@ -203,8 +203,59 @@ padre(X, Z), ancestro(Z, Y).
     padre(X, Z), padre(Z, Z2), ancestro(Z2, Y) 
 */
 
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
+/*===== Ejercicio 2=====*/
+
+vecino(X, Y, [W|Ls]) :- vecino(X, Y, Ls).
+vecino(X, Y, [X|[Y|Ls]]).
+%  --- I ---
+/*
+?- vecino(5, Y, [5, 6, 5, 3]).
+│
+├── [R1: vecino(X1, Y1, [X1, Y1 | Ls1])]
+│     Unificación: {X1 := 5, Y1 := Y, 5 := 5, 6 := Y, Ls1 := [5, 3]} => Y = 6
+│     ÉXITO (Solución 1: Y = 6)
+│
+└── [R2: vecino(X2, Y2, [W2 | Ls2]) :- vecino(X2, Y2, Ls2)]
+      Unificación: {X2 := 5, Y2 := Y, W2 := 5, Ls2 := [6, 5, 3]}
+      Meta: ?- vecino(5, Y, [6, 5, 3]).
+      │
+      ├── [R1: vecino(X3, Y3, [X3, Y3 | Ls3])]
+      │     Unificación: {X3 := 5, Y3 := Y, X3 := 6, ...}
+      │     Intenta 5 = 6 (Clash de constantes)
+      │     ──────────────────────────────────► FALLA
+      │
+      └── [R2: vecino(X4, Y4, [W4 | Ls4]) :- vecino(X4, Y4, Ls4)]
+            Unificación: {X4 := 5, Y4 := Y, W4 := 6, Ls4 := [5, 3]}
+            Meta: ?- vecino(5, Y, [5, 3]).
+            │
+            ├── [R1: vecino(X5, Y5, [X5, Y5 | Ls5])]
+            │     Unificación: {X5 := 5, Y5 := Y, 5 := 5, 3 := Y, Ls5 := []}
+            │     => Y = 3
+            │     ────────────────────────────► ÉXITO (Solución 2: Y = 3)
+            │
+            └── [R2: vecino(X6, Y6, [W6 | Ls6]) :- vecino(X6, Y6, Ls6)]
+                  Unificación: {X6 := 5, Y6 := Y, W6 := 5, Ls6 := [3]}
+                  Meta: ?- vecino(5, Y, [3]).
+                  │
+                  ├── [R1: vecino(X7, Y7, [X7, Y7 | Ls7])]
+                  │     Unificación de [3] con [X7, Y7 | Ls7]
+                  │     Falla: una lista de 1 elemento no unifica con [_, _ | _]
+                  │     ──────────────────────► FALLA
+                  │
+                  └── [R2: vecino(X8, Y8, [W8 | Ls8]) :- vecino(X8, Y8, Ls8)]
+                        Unificación: {X8 := 5, Y8 := Y, W8 := 3, Ls8 := []}
+                        Meta: ?- vecino(5, Y, []).
+                        │
+                        ├── [R1: [X9, Y9 | _] = []] ──► FALLA
+                        └── [R2: [_ | _] = []]      ──► FALLA
+
+*/
+
+%  --- II ---
+% son los mismos resultados pero con el orden invertido. Pero como prolog en este caso exploró todas las posibles caminos, no devuelve false. (En la anterior, como prolog es lazy, al hacer ; sobre la lista [5,3] para probar la segunda regla, trata de resolver con [3] y [] y como no encuentra solución devuelve false).
+
+
+/*===== Ejercicio 3=====*/
 /*===== Ejercicio =====*/
 /*===== Ejercicio =====*/
 /*===== Ejercicio =====*/
