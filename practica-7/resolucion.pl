@@ -205,8 +205,8 @@ padre(X, Z), ancestro(Z, Y).
 
 /*===== Ejercicio 2=====*/
 
-vecino(X, Y, [W|Ls]) :- vecino(X, Y, Ls).
-vecino(X, Y, [X|[Y|Ls]]).
+vecino(X, Y, [_|Ls]) :- vecino(X, Y, Ls).
+vecino(X, Y, [X|[Y|_]]).
 %  --- I ---
 /*
 ?- vecino(5, Y, [5, 6, 5, 3]).
@@ -256,8 +256,94 @@ vecino(X, Y, [X|[Y|Ls]]).
 
 
 /*===== Ejercicio 3=====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
+
+natural(0).
+natural(suc(X)) :- natural(X).
+
+/*
+menorOIgual(X, suc(Y)) :- menorOIgual(X, Y).
+menorOIgual(X,X) :- natural(X).
+*/
+
+%  --- I ---
+% La consulta busca todos los valores que sean menorOIgual a 0. Como en las definiciones tenemos el caso recursivo primero, se unificará X con suc(Y). Por la definición, ahora debe resolver menorOIgual(X, Y) siendo Y una variable libre nueva. Entra a la primera definición y unifica Y con suc(Y1) siendo Y1 una variable libre fresca. Así entra aun bucle infinito.
+
+%  --- II ---
+/* Cuando una de las ramas que recorre prolog es infinita. Esto puede ocurrir por el orden de las reglas y la forma que tiene prolog de resolverlas (izq a der, arriba a abajo). Los motivos entonces son
+1. No se consumen las variables instanciadas
+2. Las reglas recursivas están antes que los casos base
+3. Un subojetivo unifica indefinidamente sobre variables libres frescas. Se genera un término de tamaño infinito (X = suc(Y) con X e Y variables libres para este caso) sin condiciones que hagan fallar al término.
+*/
+
+%  --- III ---
+
+% En esta solución se consume la variable instanciada X, se tiene el caso base primero, y por lo tanto en cada generación de término nuevo a resolver se puede obtener un valor por la primer regla.
+menorOIgual(0,X) :- natural(X).
+menorOIgual(suc(X), suc(Y)) :- menorOIgual(X, Y).
+
+/*
+
+106 ?- menorOIgual(0, suc(0)).
+true.
+
+107 ?- menorOIgual(suc(0), suc(0)).
+true.
+
+108 ?- menorOIgual(suc(suc(0)), suc(0)).
+false.
+
+109 ?- menorOIgual(0, X).
+X = 0 ;
+X = suc(0) ;
+X = suc(suc(0)) ;
+X = suc(suc(suc(0))) 
+*/
+
+
+/*===== Ejercicio 4=====*/
+
+juntar([], L, L).
+juntar([X | L1], L2, [X | L3]) :- juntar(L1, L2, L3).
+
+/*===== Ejercicio 5=====*/
+
+%  --- I ---
+
+last(L, U) :- juntar(_, [U], L).
+
+%  --- II ---
+reverse([], []). 
+reverse([X | L1 ], R) :- reverse(L1, R1), juntar(R1, [X], R).
+
+%  --- III ---
+
+prefijo(P, L) :- juntar(P, _, L).
+
+%  --- IV ---
+
+sufijo(S, L) :- juntar(_, S, L).
+
+%  --- V ---
+
+%sublista(S, L) :- prefijo(L1, L), sufijo(S, L1).
+sublista(S, L) :- juntar(P, _, L), juntar(_, S, P).
+
+
+%  --- VI ---
+
+pertenece(X, L) :- juntar(_, [X | _], L).
+
+/*===== Ejercicio 6=====*/
+
+aplanar(X, [X]) :-
+    X \= [],
+    X \= [_ | _].
+aplanar([], []).
+aplanar([X | L1 ], Y) :- 
+    aplanar(X, Y1), 
+    aplanar(L1, Y2), 
+    juntar(Y1, Y2, Y).
+    
+    
 /*===== Ejercicio =====*/
 /*===== Ejercicio =====*/
