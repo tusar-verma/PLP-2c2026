@@ -345,5 +345,94 @@ aplanar([X | L1 ], Y) :-
     juntar(Y1, Y2, Y).
     
     
+/*===== Ejercicio 7=====*/
+
+%  --- I ---
+interseccion([], _, []).
+
+% Pertenece a L2 y no está repetido en el resto de L1 -> se incluye en L3
+interseccion([X | L1], L2, [X | L3]) :- 
+    member(X, L2), 
+    not(member(X, L1)),
+    interseccion(L1, L2, L3).
+% Pertenece a L2 pero está duplicado más adelante en L1 -> se descarta esta ocurrencia
+interseccion([X | L1], L2, L3) :- 
+    member(X, L2), 
+    member(X, L1),
+    interseccion(L1, L2, L3).
+% No pertenece a L2 -> se descarta
+interseccion([X | L1], L2, L3) :- 
+    not(member(X, L2)),
+    interseccion(L1, L2, L3).
+
+% en esta solución hace recursión primero y luego va resolviendo los valores de N
+partir(0, L, [], L).
+partir(N, [X|XS], [X|L3], L2) :-
+    partir(N1, XS, L3, L2),
+    N is N1 + 1.
+
+%  --- II ---
+borrar([], _, []).
+borrar([X|XS], X, YS) :- 
+    borrar(XS, X, YS).
+borrar([Z|XS], X, [Z|YS]) :- 
+    X \= Z,
+    borrar(XS, X, YS).
+
+%  --- III ---
+sacarDuplicados([], []).
+sacarDuplicados([X|XS], [X | L2]) :- not(member(X, XS)), sacarDuplicados(XS, L2).
+sacarDuplicados([X|XS], L2) :- member(X, XS), sacarDuplicados(XS, L2).
+
+/*
+Otra forma
+
+sacarDuplicados([], []).
+sacarDuplicados([X|XS], [X|YS]) :- borrar(XS, X, SinX), sacarDuplicados(SinX, YS).
+
+
+*/
+
+%  --- IV ---
+permutacion([], []).
+permutacion(L, [X | P]) :-
+    append(Prefijo, [X | Sufijo], L),
+    append(Prefijo, Sufijo, RESTO),
+    permutacion(RESTO, P).
+
+%  --- V ---
+reparto(L, 1, [L]).
+reparto(L, N, [Prefijo | LListas2]) :-
+    N > 1,
+    N1 is N - 1,
+    append(Prefijo, Resto, L),
+    reparto(Resto, N1, LListas2).
+
+
+%  --- VI ---
+repartoSinVacias([], [[]]).
+repartoSinVacias(L, [Prefijo | LListas2]) :-
+    append(Prefijo, Resto, L),
+    Prefijo \= [],
+    repartoSinVacias(Resto, LListas2).
+
+
 /*===== Ejercicio =====*/
 /*===== Ejercicio =====*/
+/*===== Ejercicio =====*/
+/*===== Ejercicio =====*/
+/*===== Ejercicio =====*/
+/*===== Ejercicio =====*/
+/*===== Ejercicio =====*/
+/*===== Ejercicio =====*/
+
+%  --- I ---
+%  --- II ---
+%  --- III ---
+%  --- IV ---
+%  --- V ---
+%  --- VI ---
+%  --- VII ---
+%  --- VIII ---
+%  --- IX ---
+%  --- X ---
