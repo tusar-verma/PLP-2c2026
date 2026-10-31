@@ -417,14 +417,125 @@ repartoSinVacias(L, [Prefijo | LListas2]) :-
     repartoSinVacias(Resto, LListas2).
 
 
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
-/*===== Ejercicio =====*/
+/*===== Ejercicio 8===== (gemini) */
+% Subconjunto de elementos preservando el orden relativo
+subconjunto([], []).
+subconjunto([X | Xs], [X | Ys]) :-
+    subconjunto(Xs, Ys).
+subconjunto([_ | Xs], Ys) :-
+    subconjunto(Xs, Ys).
+
+% Suma de una lista de enteros
+sumatoria([], 0).
+sumatoria([X | Xs], S) :-
+    sumatoria(Xs, S1),
+    S is S1 + X.
+
+% Predicado principal
+parteQueSuma(L, S, P) :-
+    subconjunto(L, P),
+    P \= [],
+    sumatoria(P, S).
+
+/*===== Ejercicio 9=====*/
+desde(X,X).
+desde(X,Y) :- N is X+1, desde(N,Y).
+
+%  --- I ---
+% Por el término N is X+1, X debe de estar instanciado. Y puede ser libre +X, ?Y.
+
+%  --- II ---
+desdeReversible(X,Y) :- 
+    nonvar(Y),
+    Y >= X.
+desdeReversible(X,Y) :- 
+    var(Y),
+    desde(X,Y).
+
+
+/*===== Ejercicio 10===== gemini la segunda parte*/
+intercalar([], L2, L2).
+intercalar(L1, [], L1) :-
+    L1 \= [].
+intercalar([X | L1], [Y | L2], [X, Y | L3]) :-
+    intercalar(L1, L2, L3).
+
+/*
+- Modo intercalar(+L1, +L2, -L3): Es completamente determinístico y genera de forma directa la lista intercalada única.   
+- Modo intercalar(-L1, -L2, +L3): Es completamente reversible. Dada una lista L3, Prolog descompone de manera constructiva sus elementos en las posiciones pares e impares para reconstruir L1 y L2. Además, explora las particiones en las cuales una de las dos listas finalizó antes.   
+- Modo intercalar(-L1, -L2, -L3): Genera recursivamente todas las tuplas de listas posibles que cumplan la relación, aunque es un espacio infinito.
+- Modo intercalar(+L1, -L2, -L3): (equiv -L1, +L2, -L3) tira una solución con la primer regla, falla con la segunda, hace llamada recursiva con la 3ra regla hasta agotar L1. Cuando termina, unifica una ultima vez con la primer regla (por []) y finalmente falla con regla 2 y 3. Por lo tanto, son finitas soluciones.
+
+Como todos los predicados para las combinaciones de argumentos posibles son reversibles (se puede instanciar o no instanciar) entonces el predicado es completamente reversible.
+*/
+
+/*===== Ejercicio 11=====*/
+
+
+vacio(nil).
+
+raiz(bin(_, V, _), V).
+
+altura(nil, 0).
+altura(bin(IZQ, _, DER), N) :-
+    altura(IZQ, AlturaIzq),
+    altura(DER, AlturaDer),
+    N is max(AlturaIzq, AlturaDer) + 1.
+
+cantidadDeNodos(nil, 0).
+
+cantidadDeNodos(bin(Izq, _, Der), N) :-
+    cantidadDeNodos(Izq, N1),
+    cantidadDeNodos(Der, N2),
+    N is N1 + N2 + 1.
+
+/*===== Ejercicio 12=====*/
+
+%  --- I ---
+inorder(nil, []).
+inorder(bin(Izq, V, Der), L) :-
+    inorder(Izq, InorderIzq),
+    inorder(Der, InorderDer),
+    append(InorderIzq, [V | InorderDer], L).
+
+
+%  --- II ---
+
+arbolConInorder([], nil).
+arbolConInorder(L, bin(Izq, X, Der)) :-
+    append(L1, [X | L2], L),
+    arbolConInorder(L1, Izq),
+    arbolConInorder(L2, Der).
+
+%  --- III ---
+
+aBB(nil).
+aBB(Ab) :- inorder(Ab, L), listaOrdernada(L).
+
+listaOrdernada([]).
+listaOrdernada([_]).
+listaOrdernada([X1 | [X2 | XS]]) :- X1 =< X2, listaOrdernada([X2 | XS]).
+
+%  --- IV ---
+aBBInsertar(X, nil, bin(nil, X, nil)).
+aBBInsertar(X, bin(Izq, V, Der), bin(NuevoIzq, V, Der)) :-
+    X < V,
+    aBBInsertar(X, Izq, NuevoIzq).
+aBBInsertar(X, bin(Izq, V, Der), bin(Izq, V, NuevoDer)) :-
+    X > V,
+    aBBInsertar(X, Der, NuevoDer).
+% No permitimos valores repetidos en el árbol
+aBBInsertar(X, bin(Izq, X, Der), bin(Izq, X, Der)).
+
+/*===== Ejercicio 13=====*/
+/*===== Ejercicio 14=====*/
+
+/*===== Ejercicio 16=====*/
+/*===== Ejercicio 17=====*/
+/*===== Ejercicio 18=====*/
+/*===== Ejercicio 20=====*/
+/*===== Ejercicio 22=====*/
+/*===== Ejercicio 23=====*/
 
 %  --- I ---
 %  --- II ---
