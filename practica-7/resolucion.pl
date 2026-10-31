@@ -527,8 +527,110 @@ aBBInsertar(X, bin(Izq, V, Der), bin(Izq, V, NuevoDer)) :-
 % No permitimos valores repetidos en el árbol
 aBBInsertar(X, bin(Izq, X, Der), bin(Izq, X, Der)).
 
+/*
+- Es reversible con respecto a T2. Si se instancia, se chequeará si X insertado en T1 es T2.
+- X Y T1 (por V) no son reversibles ya que al ser usados en el operador lógico "<" y ">" se necesita ambos instanciados.
+*/
+
 /*===== Ejercicio 13=====*/
+% generate: un par de naturales, test: gcd es 1
+
+% En este caso el par (3, 2), por ejemplo, es igual al par (2, 3).
+% podemos generar todos los pares que sumen S (aumentando S en 1) y unificando X desde 1 hasta S-1, Y = S - X.
+
+coprimos(X, Y) :-
+    % generate:
+    % genera los numeros desde el 2 en adelante en S
+    desde(2, S),
+    % test:
+    % instancia X e Y para que sumen S
+    suman(S, X, Y), 
+    % se queda con aquellos pares coprimos.
+    1 is gcd(X, Y). 
+
+
+% instancia X e Y tal que cumpla S = X + Y.
+suman(S, X, Y) :-
+    % en X se instancias valores entre 1 y S.
+    entre(1, S, X), 
+    % instancia Y tal que Y = S - X. Con la restricción adicional Y >= 1 restringimos para que Y > 0.
+    Y is S - X, Y >= 1.
+
+% genera numeros entre el min y el max
+entre(Min, Max, Min):- Min =< Max.
+entre(Min, Max, X):- 
+    Min < Max,
+    Min1 is Min + 1,
+    entre(Min1, Max, X).
+
+% ejercicio 9
+/*desde(X, X).
+desde(X, Y) :-
+    X1 is X + 1,
+    desde(X1, Y).*/
+
+
+
 /*===== Ejercicio 14=====*/
+
+%  --- I ---
+cuadradoSemiMagico(0, []).
+cuadradoSemiMagico(N, XS) :-
+    N > 0,
+    desde(0, S),
+    generarListasSumen(S, N, N, XS).
+
+generarListasSumen(_, 0, _, []).
+generarListasSumen(S, CantidadListasAGenerar, TamanoLista,  [ZS | YS]) :-
+    CantidadListasAGenerar > 0,
+    N1 is CantidadListasAGenerar - 1,
+    generarListaSuma(S, TamanoLista, ZS),
+    generarListasSumen(S, N1, TamanoLista, YS).
+
+generarListaSuma(0, 0, []).
+generarListaSuma(S, Tamano, [X | XS]) :-
+    Tamano > 0,
+    Tamano1 is Tamano - 1,
+    between(0, S, X),
+    SResto is S - X,
+    generarListaSuma(SResto, Tamano1, XS).
+
+
+%  --- II ---
+cuadradoMagico(0, []).
+cuadradoMagico(N, [X | XS]) :-
+    N > 0,
+    % generate
+    cuadradoSemiMagico(N, [X | XS]),
+    % test
+    sumaLista(X, S),
+    esCuadradoMagico(N, S, [X | XS]).
+
+esCuadradoMagico(0, _, _).
+esCuadradoMagico(N, S, XS) :-
+    N > 0,
+    columnaSuma(N, XS, S),
+    N1 is N - 1,
+    esCuadradoMagico(N1, S, XS).
+
+
+sumaLista([], 0).
+sumaLista([X | XS], N) :-
+    sumaLista(XS, N1),
+    N is N1 + X.
+
+columnaSuma(_, [], 0).
+columnaSuma(N, [X | XS], S) :-
+    elemento(N, X, NesimoElemLista),
+    columnaSuma(N, XS, S1),
+    S is S1 + NesimoElemLista.
+
+
+elemento(1, [X | _], X).
+elemento(N, [_ | XS], NesimoElemLista) :-
+    N > 1,
+    N1 is N - 1,
+    elemento(N1, XS, NesimoElemLista).
 
 /*===== Ejercicio 16=====*/
 /*===== Ejercicio 17=====*/
