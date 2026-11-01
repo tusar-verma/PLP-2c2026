@@ -809,15 +809,105 @@ noEsPrimo(P) :-
 
 
 /*===== Ejercicio 22=====*/
+
+esNodo(G, X).
+esArista(G, X, Y).
+
+%  --- I ---
+
+caminoSimple(G, D, H, L) :-    
+    esNodo(G, D),
+    esNodo(G, H),
+    generarCaminoSimple(G, D, H, [D], L).
+
+% +G, +D, +H, +L1, ?L2
+generarCaminoSimple(_, H, H, _, [H]).
+generarCaminoSimple(G, Actual, H, Visitados, [Actual | L2]) :-
+    Actual \= H, % para no tener soluciones repetidas
+    esArista(G, Actual, Siguiente),
+    not(pertenece(Siguiente, Visitados)),
+    generarCaminoSimple(G, Siguiente, H, [Siguiente | Visitados], L2).
+
+%  --- II ---
+% con estrategia generate and test
+caminoHamiltoniano(G, L) :-
+    % generar todos los nodos y tomar de a pares
+    esNodo(G, A),
+    esNodo(G, B), % si el grafo es de un solo nodo, B unifica con A y encuentra la solución.
+    caminoSimple(G, A, B, L), 
+    % testear que L tenga todos los nodos
+    not(noEsCaminoHamiltoneano(G, L)).
+
+noEsCaminoHamiltoneano(G, L) :-
+    esNodo(G, A),
+    not(pertenece(A, L)).
+
+%  --- III ---
+esConexo(G) :-
+    not(noEsConexo(G)).
+
+noEsConexo(G) :-
+    esNodo(G, A),
+    esNodo(G, B),
+    not(caminoSimple(G, A, B, _)).
+
+/*
+esConexo(G) :-
+    not((esNodo(G, A), esNodo(G, B), not(caminoSimple(G, A, B, _))))
+*/
+
+%  --- IV ---
+esEstrella(G) :-
+    esConexo(G),
+    esNodo(G, Centro),
+    % no es centro si hay una arista que sus extremos no es el centro.
+    not((esArista(G, A, B), A \= Centro, B \= Centro)).
+
+
 /*===== Ejercicio 23=====*/
 
 %  --- I ---
+arbol(A) :-
+    desde(0, N),
+    generarArbol(N, A).
+
+% Idea: ir generando los arboles con cantidad de nodos 0, 1, 2, ... etc.
+% Para N nodos debemos elegir una cantidad A de nodos para el subarbol Izq. El derecho quedara con N - A nodos.
+% el rango de A irá de 0 a N - 1 (restamos uno por el nodo actual).
+generarArbol(0, nil).
+generarArbol(N, bin(SubarbolIzq, _, SubarbolDer)) :-
+    N > 0,
+    TotalNodosParaSubarboles is N - 1,
+    between(0, TotalNodosParaSubarboles, CantIzq),
+    generarArbol(CantIzq, SubarbolIzq),
+
+    CantDer is TotalNodosParaSubarboles - CantIzq,
+    generarArbol(CantDer, SubarbolDer).
+    
 %  --- II ---
-%  --- III ---
-%  --- IV ---
-%  --- V ---
-%  --- VI ---
-%  --- VII ---
-%  --- VIII ---
-%  --- IX ---
-%  --- X ---
+nodosEn(nil, _).
+nodosEn(bin(SubarbolIzq, V, SubarbolDer), L) :-
+    member(V, L),
+    nodosEn(SubarbolIzq, L),
+    nodosEn(SubarbolDer, L).
+
+%  --- III (gemini)---
+% Caso base: el árbol vacío es válido para cualquier lista disponible
+sinRepEn(nil, _).
+
+% Caso recursivo:
+sinRepEn(bin(Izq, V, Der), L) :-
+    % 1. Extraemos un elemento para la raíz y obtenemos el resto:
+    select(V, L, Resto),
+    % 2. Particionamos el resto en dos conjuntos disjuntos:
+    particion(Resto, LIzq, LDer),
+    % 3. Cada subárbol consume exclusivamente su propia partición:
+    sinRepEn(Izq, LIzq),
+    sinRepEn(Der, LDer).
+
+% particion(+L, -L1, -L2) divide una lista en dos sublistas disjuntas
+particion([], [], []).
+particion([X | Xs], [X | L1], L2) :-
+    particion(Xs, L1, L2).
+particion([X | Xs], L1, [X | L2]) :-
+    particion(Xs, L1, L2).
