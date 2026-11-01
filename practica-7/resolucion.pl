@@ -597,6 +597,7 @@ generarListaSuma(S, Tamano, [X | XS]) :-
 
 
 %  --- II ---
+% genero un cuadrado semi magico y luego testeo que sea magico.
 cuadradoMagico(0, []).
 cuadradoMagico(N, [X | XS]) :-
     N > 0,
@@ -606,26 +607,28 @@ cuadradoMagico(N, [X | XS]) :-
     sumaLista(X, S),
     esCuadradoMagico(N, S, [X | XS]).
 
+% Todas las columnas suman S. Chequeo recursivo por el numero de columna.
 esCuadradoMagico(0, _, _).
-esCuadradoMagico(N, S, XS) :-
+esCuadradoMagico(N, S, Matriz) :-
     N > 0,
-    columnaSuma(N, XS, S),
+    columnaSuma(N, Matriz, S),
     N1 is N - 1,
-    esCuadradoMagico(N1, S, XS).
+    esCuadradoMagico(N1, S, Matriz).
 
-
+% Recorre la lista y suma los valores.
 sumaLista([], 0).
 sumaLista([X | XS], N) :-
     sumaLista(XS, N1),
     N is N1 + X.
 
+% suma de una columna de una matriz. Tomo el n-esimo elemento de cada fila y las sumo.
 columnaSuma(_, [], 0).
-columnaSuma(N, [X | XS], S) :-
-    elemento(N, X, NesimoElemLista),
-    columnaSuma(N, XS, S1),
+columnaSuma(N, [Fila | Filas], S) :-
+    elemento(N, Fila, NesimoElemLista),
+    columnaSuma(N, Filas, S1),
     S is S1 + NesimoElemLista.
 
-
+% n-esimo elemento de una lista, por lo que 1 sería el primer elemento.
 elemento(1, [X | _], X).
 elemento(N, [_ | XS], NesimoElemLista) :-
     N > 1,
@@ -633,9 +636,178 @@ elemento(N, [_ | XS], NesimoElemLista) :-
     elemento(N1, XS, NesimoElemLista).
 
 /*===== Ejercicio 16=====*/
+
+frutal(frutilla).
+frutal(banana).
+frutal(manzana).
+cremoso(banana).
+cremoso(americana).
+cremoso(frutilla).
+cremoso(dulceDeLeche).
+
+leGusta(X) :- frutal(X), cremoso(X).
+cucurucho(X,Y) :- leGusta(X), leGusta(Y).
+
+%  --- I ---
+/*
+cucurucho(X, Y) :- leGusta(X), leGusta(Y).
+    leGusta(X) :- frutal(X), cremoso(X)).
+        frutal(X) 
+            unifica frutal(X) con frutal(frutilla) -> X := frutilla
+                cremoso(frutilla) tiene exito
+                
+                leGusta(Y) :- frutal(Y), cremoso(Y).
+                    frutal(Y) 
+                        unifica frutal(Y) con frutal(frutilla) -> Y := frutilla
+                        cremoso(frutilla) tiene exito.
+                            Solución 1: X := frutilla, Y := frutilla.
+
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(banana) -> Y := banana
+                        cremoso(banana) tiene exito
+                            Solucion 2: X := frutilla, Y := banana
+                    
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(manzana) -> Y := manzana
+                        cremoso(manzana) falla
+                
+
+            unifica frutal(X) con frutal(banana) -> X := banana
+                cremos(banana) tiene exito
+                
+                leGusta(Y) :- frutal(Y), cremoso(Y).
+                    frutal(Y) 
+                        unifica frutal(Y) con frutal(frutilla) -> Y := frutilla
+                        cremoso(frutilla) tiene exito.
+                            Solución 4: X := banana, Y := frutilla.
+
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(banana) -> Y := banana
+                        cremoso(banana) tiene exito
+                            Solucion 5: X := banana, Y := banana
+                    
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(manzana) -> Y := manzana
+                        cremoso(manzana) falla
+
+            unifica frutal(X) con frutal(manzana) -> X := manzana
+                cremos(manzana) falla
+        falla
+    falla
+falla
+*/
+
+%  --- II ---
+/*
+El operador corte hace 2 cosas:
+1. fija los valores unificados sobre los terminos a la izquierda, podando el backtracking de los subojetivos.
+2. descarta las reglas restantes del predicado que aun no se evaluaron, podando más el árbol.
+
+leGusta(X) :- !, frutal(X), cremoso(X).
+    Como es la unica regla de leGusta y no hay reglas a la izquierda del !, se tiene el mismo árbol de búsqueda. Si huviera otras reglas, las podaría.
+
+leGusta(X) :- frutal(X), !, cremoso(X).
+    Se obtiene la primer instancia de la base de conocimientos que unifique con frutal(X) y se poda el resto de alternativas y reglas para leGusta()). Si esa instancia también es cremosa, se tiene exito y se devuelve la unica solución (unica justamente por la poda). Si no es cremosa, se falla.
+
+leGusta(X) :- frutal(X), cremoso(X), !.
+    Con este corte obtenemos el primer X que sea frutal y cremoso. Luego de encontrarlo, el algoritmo no buscará más ya que el ! podará el resto de ramas.
+
+cucurucho(X, Y) :- !, leGusta(X), leGusta(Y).
+    poda cualquier otra regla alternativa de cucurucho. Como no hay, el resultado será identico al punto I.
+
+ cucurucho(X, Y) :- leGusta(X), !, leGusta(Y).
+    fija el primer valor que unifique con X, luego poda alternativas de reglas de cucurucho (no las hay en este caso) y poda todo otro valor para X. 
+    Luego resuelve el subojetivo leGusta(Y). Podría fallar si para dicho X encontrado no hay una instancia de Y que satisfaga leGusta(X), leGusta(Y).
+    X = frutilla, Y = frutilla; X = frutilla, Y = banana
+
+cucurucho(X, Y) :- leGusta(X), leGusta(Y), !).
+    Busca la primer instancia de X e Y que satisfaga leGusta(X), leGusta(Y) y luego las fija, cortando otras posibles instancias. Además también corta la busqueda con otras posibles reglas definidas para cucurucho (en este caso no hay).
+    X = frutilla, Y = frutilla
+*/
+
 /*===== Ejercicio 17=====*/
+
+%  --- I ---
+/*
+el meta predicado not(P) falla si P tiene exito y tiene exito si P falla.
+Sirve para verficar si con la base de conocimientos podemos probar P.
+
+si not(P) verdadero no demuestra que P es falso, sino que con la base de conocimientos no se puede demostrar P.
+
+?- P(Y), not(Q(Y))
+
+Buscar las instancias Y que satisfagan P tales que no sirvan para probar Q.
+
+exists Y : P(Y) and not(Q(Y))
+
+*/
+
+%  --- II ---
+/*
+?- not(Q(Y)), P(Y)
+
+Primero se buscará un Y que satisfaga Q(Y). Si se encuentra not(Q(Y)) falla. Por lo tanto si existe un c que satisfaga Q (Q(c)), entocnes el predicado es siempre falso.
+Luego si no existe ningun valor que satisfaga Q, el not(Q(Y)) tiene exito y se termina listando todos los valores que cumplan P(Y).
+
+(not(exists Y : Q(Y))) and P(Y) 
+
+Se pierde la "propiedad" de filtro que había en I (generaba Y que cumplan P y luego se verificaba que no cumpla Q). Aca se tiene exito si no existe instancia que satisfaga Q y se tiene exito con las instancias que satisfagan P.
+
+*/
+
+%  --- III ---
+
+/*
+
+P(Y) and not(P(Z) and Z \= Y). 
+
+unicoP(Y) :-
+    P(Y),
+    not((P(Z), Z \= Y)).
+
+*/
+
 /*===== Ejercicio 18=====*/
+% usando la idea del ej 17 III, generamos todos los posibles cortes y nos quedamos con aquellos que no tengan un corte menor
+
+corte(L, L1, L2, Diff):-
+    append(L1, L2, L),
+    sumaLista(L1, S1),
+    sumaLista(L2, S2),
+    Diff is abs(S1 - S2).
+
+corteMasParejo(L, L1, L2) :-
+    corte(L, L1, L2, Diff),
+    not((corte(L, _, _, Diff1) , Diff1 < Diff)).
+
+
 /*===== Ejercicio 20=====*/
+
+proximoNumPoderoso(N, Y):-
+    Inicio is N + 1,
+    desde(Inicio, Y),
+    not(noCondicionNumPoderoso(Y)),
+    !. % solo pide el proximo. Al encontrarlo ya cortamos el resto del arbol de busqueda.
+
+noCondicionNumPoderoso(Y):-
+    between(2, Y, N),
+    0 =:= Y mod N,
+
+    esPrimo(N),
+    PrimoCuadrado is N * N,
+    0 =\= Y mod PrimoCuadrado.
+
+esPrimo(P):-
+    P > 1,
+    not(noEsPrimo(P)).
+
+noEsPrimo(P) :-
+    P > 1,
+    P1 is P - 1,
+    between(2, P1, N),
+    0 =:= P mod N.
+
+
 /*===== Ejercicio 22=====*/
 /*===== Ejercicio 23=====*/
 
