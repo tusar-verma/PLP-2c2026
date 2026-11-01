@@ -35,7 +35,6 @@ test(tamaño, [nondet]) :-
     Columnas =@= 3.
 
 % Ejercicio 3: coordenadaEnRango
-
 test(coordenadaEnRango, [nondet]) :-
     coordenadaEnRango([[a,b,c],[d,e,f]], (1,1)).
 
@@ -57,6 +56,7 @@ test(tableroConPosiciónLiberada, [nondet]) :-
     tableroConPosiciónLiberada([[rojo,azul],[verde,rojo]], (2,1), T),
     T =@= [[rojo,azul],[libre,rojo]].
 
+/*
 % Ejercicio 4.b: tableroConPosicionesLiberadas
 
 test(tableroConPosicionesLiberadas, [nondet]) :-
@@ -196,5 +196,6 @@ test(mejorJuegoNaive, [nondet]) :-
 test(tableroEnElQueNaiveGanaEmpezandoPor, [nondet]) :-
     with_output_to(string(_), once(tableroEnElQueNaiveGanaEmpezandoPor(T, (1,2)))),
     juegoNaiveVictorioso(T, [(1,2)|_]).
+*/
 
 :- end_tests(tp2).

@@ -5,7 +5,23 @@
 % ----------------
 
 % esMatriz(+ListaDeListas)
-esMatriz(_) :- completar("Ejercicio 1").
+
+/*esMatriz([]).
+esMatriz([Lista | RestoListas]) :-
+  length(Lista, TamLista),
+  todasLasListasTienenTam(TamLista, RestoListas).
+  
+todasLasListasTienenTam(_, []).
+todasLasListasTienenTam(TamLista, [Lista | RestoListas ]) :-
+  length(Lista, TamLista),
+  todasLasListasTienenTam(TamLista, RestoListas).*/
+
+esMatriz([]).
+esMatriz([Lista | RestoListas ]) :-
+  length(Lista, TamLista),
+  maplist(longitudLista(TamLista), RestoListas).
+  
+longitudLista(N, Lista) :- length(Lista, N).
 
 % ----------------
 % Ejercicio 2
@@ -13,7 +29,10 @@ esMatriz(_) :- completar("Ejercicio 1").
 
 % tamaño(+Matriz, -Filas, -Columnas)
 % Precondición: esMatriz(Matriz)
-tamaño(_, _, _) :- completar("Ejercicio 2").
+tamaño([], 0, 0).
+tamaño([Lista | RestoListas], Filas, Columnas) :-
+  length([Lista | RestoListas], Filas),
+  length(Lista, Columnas).
 
 % ----------------
 % Ejercicio 3
@@ -21,7 +40,25 @@ tamaño(_, _, _) :- completar("Ejercicio 2").
 
 % coordenadaEnRango(+Matriz, +Coordenada)
 % Precondición: esMatriz(Matriz)
-coordenadaEnRango(_, _) :- completar("Ejercicio 3").
+coordenadaEnRango(Matriz, (X, Y)) :- 
+  tamaño(Matriz, Filas, Columnas),
+  X > 0,
+  Y > 0,
+  Filas >= X,
+  Columnas >= Y.
+
+/*
+Sobre la reversibilidad: 
+  los operadores aritmeticso > y >= requieren que ambos lados esten instanciados. Por lo tanto, el segundo argumento no es reversible.
+  Matriz no es reversible: 
+    Al tratar de unificar Matriz, entra al subojectivo tamaño
+      Usando la primer regla, unifica Matriz con [], si fila: 0 y columna 0. Al volver, no satisface la regla 2 de coordenadaEnRango y hace backtracking.
+      Ahora usa la regla 2 de tamaño.
+        El primer length unifica con M: [Lista] y Filas: 1, con Lista libre.
+          Al ir al segundo length(Lista, Columnas), unifica Lista: [] y columna 0. Al volver a coordenadaEnRango falla y hace backtracking 
+          unifica Lista: [_] y Columnas 1. Vuelve a coordenadaEnRango, si la coordenada (X, Y) tiene X=1 e Y >= 1 entonces tiene exito, sino falla. 
+          Al pedir sucesivamente más resultados se generan matrices de 1 sola fila y N columnas, con N > Y, siendo N la cantidad de veces que se pidió una respuesta. 
+*/
 
 % ----------------
 % Observadores de tablero.
