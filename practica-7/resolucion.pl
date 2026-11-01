@@ -1,0 +1,913 @@
+/*===== Ejercicio 1 =====*/
+
+padre(juan, carlos).
+padre(juan, luis).
+padre(carlos, daniel).
+padre(carlos, diego).
+padre(luis, pablo).
+padre(luis, manuel).
+padre(luis, ramiro).
+padre(daniel, jose).
+abuelo(X,Y) :- padre(X,Z), padre(Z,Y).  
+
+% --- I ---
+% X = juan ;
+% false.
+
+
+% --- II ---
+hijo(X, Y) :- padre(Y, X).
+
+hermano(X, Y) :- 
+    padre(Z, X), 
+    padre(Z, Y),
+    X \= Y.
+
+descendiente(X, Y) :- 
+    padre(Y, X).
+descendiente(X, Y) :- 
+    padre(Z, X), 
+    descendiente(Z, Y).
+
+%  --- III ---
+
+/*
+descendiente(A, juan).
+    Regla 1: padre(juan, A)
+        A = carlos (solución 1)
+        A = luis (solucion 2)
+    Regla 2: padre(Z, A), descendiente(Z, juan)
+        padre(Z, A),
+            Z = juan
+            A = carlos
+                descendiente(juan, juan)
+                    Regla 1: padre(juan, juan) (false)
+                    Regla 2: padre (Z, juan), (false)
+            Z = juan
+            A = luis
+                descendiente(juan, juan)
+                    Regla 1: padre(juan, juan) (false)
+                    Regla 2: padre (Z, juan), (false)
+
+            Z = carlos
+            A = daniel
+                descendiente(carlos, juan)
+                    Regla 1: padre(juan, carlos) (true)
+                        A = daniel  (solucion 3)
+                    Regla 2: padre(Z2, carlos), descendiente(Z2, juan)
+                        Z2 = juan 
+                        descendiente(juan, juan) (false)
+            Z = carlos
+            A = diego
+                descendiente(carlos, juan)
+                    Regla 1: padre(juan, carlos) (true) (A = diego  (solucion 4))
+                    Regla 2: padre(Z2, carlos), descendiente(Z2, juan)
+                        Z2 = juan 
+                        descendiente(juan, juan) (false)
+
+            Z = luis
+            A = pablo
+                descendiente(luis, juan)
+                    Regla 1: padre(juan, luis) (true) (A = pablo  (solucion 5))
+                    Regla 2: padre(Z2, luis), descendiente(Z2, juan)
+                        Z2 = juan 
+                        descendiente(juan, juan) (false)
+            Z = luis
+            A = manuel
+                descendiente(luis, juan)
+                    Regla 1: padre(juan, luis) (true) (A = manuel  (solucion 6))
+                    Regla 2: padre(Z2, luis), descendiente(Z2, juan)
+                        Z2 = juan 
+                        descendiente(juan, juan) (false)
+            Z = luis
+            A = ramiro
+                descendiente(luis, juan)
+                    Regla 1: padre(juan, luis) (true) (A = ramiro (solucion 7))
+                    Regla 2: padre(Z2, luis), descendiente(Z2, juan)
+                        Z2 = juan 
+                        descendiente(juan, juan) (false)
+
+
+--- Escrito por gemini ---
+
+?- descendiente(A, juan).
+│
+├── [Regla 1: padre(juan, A)]
+│   ├── A = carlos  ──────────────────────────────────────────► ÉXITO (Solución 1)
+│   └── A = luis    ──────────────────────────────────────────► ÉXITO (Solución 2)
+│
+└── [Regla 2: padre(Z, A), descendiente(Z, juan)]
+    │
+    ├── [padre(Z, A) unifica con padre(juan, carlos)] => Z = juan, A = carlos
+    │   └── ?- descendiente(juan, juan).
+    │       ├── [R1: padre(juan, juan)] ──────────────────────► FALLA
+    │       └── [R2: padre(Z1, juan), ...] ───────────────────► FALLA (nadie es padre de juan)
+    │
+    ├── [padre(Z, A) unifica con padre(juan, luis)] => Z = juan, A = luis
+    │   └── ?- descendiente(juan, juan).
+    │       ├── [R1: padre(juan, juan)] ──────────────────────► FALLA
+    │       └── [R2: padre(Z1, juan), ...] ───────────────────► FALLA
+    │
+    ├── [padre(Z, A) unifica con padre(carlos, daniel)] => Z = carlos, A = daniel
+    │   └── ?- descendiente(carlos, juan).
+    │       ├── [R1: padre(juan, carlos)] (Éxito) ────────────► ÉXITO (Solución 3: A = daniel)
+    │       └── [R2: padre(Z1, carlos), ...]
+    │           └── Z1 = juan => descendiente(juan, juan) ────► FALLA
+    │
+    ├── [padre(Z, A) unifica con padre(carlos, diego)] => Z = carlos, A = diego
+    │   └── ?- descendiente(carlos, juan).
+    │       ├── [R1: padre(juan, carlos)] (Éxito) ────────────► ÉXITO (Solución 4: A = diego)
+    │       └── [R2: padre(Z1, carlos), ...] ─────────────────► FALLA
+    │
+    ├── [padre(Z, A) unifica con padre(luis, pablo)] => Z = luis, A = pablo
+    │   └── ?- descendiente(luis, juan).
+    │       ├── [R1: padre(juan, luis)] (Éxito) ──────────────► ÉXITO (Solución 5: A = pablo)
+    │       └── [R2: padre(Z1, luis), ...] ───────────────────► FALLA
+    │
+    ├── [padre(Z, A) unifica con padre(luis, manuel)] => Z = luis, A = manuel
+    │   └── ?- descendiente(luis, juan).
+    │       ├── [R1: padre(juan, luis)] (Éxito) ──────────────► ÉXITO (Solución 6: A = manuel)
+    │       └── [R2: padre(Z1, luis), ...] ───────────────────► FALLA
+    │
+    └── [padre(Z, A) unifica con padre(luis, ramiro)] => Z = luis, A = ramiro
+        └── ?- descendiente(luis, juan).
+            ├── [R1: padre(juan, luis)] (Éxito) ──────────────► ÉXITO (Solución 7: A = ramiro)
+            └── [R2: padre(Z1, luis), ...] ───────────────────► FALLA
+            
+*/
+
+
+%  --- IV ---
+% abuelo(juan, A).
+
+
+%  --- V ---
+% hermano(pablo, A).
+
+%  --- VI ---
+%ancestro(X, X).
+%ancestro(X, Y) :- ancestro(Z, Y), padre(X, Z).
+
+
+%  --- VII ---
+% eventualmente se resuelven todos los descendientes de juan, pero se llega a un bucle infinito y el programa se cuelga. Esto ocurre por la recursión, donde la segunda regla queda con 2 variables libres no instanciadas (y 1 fresca), por lo que en cada paso no se está reduciendo el problema.
+
+/*
+ancestro(juan, X) 
+    regla 1   
+        resuelve juan = X 
+        si se pide otro valor falla y sigue a la siguiente regla.
+    regla 2
+        ancestro(Z, X), padre(juan, Z)
+            ancestro(Z, X)
+                regla 1 resuelve Z = X
+                ancestro(X, X), padre(juan, X) 
+                    resuelve X Carlos y Luis, y luego falla (backtracking a ancestro(Z, X))
+
+                regla 2 implica resolver ancestro(Z2, X), padre(Z, Z2)
+                ancestro(Z2, X), padre(Z, Z2), padre(juan, Z)
+                    ancestro(Z2, X)
+                        regla 1 resuelve Z2 = X
+                            ancestro(X, X), padre(Z, X), padre(juan, Z)
+                                resuelve Z = carlos y X los hijos de carlos: daniel, diego
+                                resuelve Z = luis y X los hijos de luis: pablo, manuel, ramiro
+                                luego falla (backtracking a ancestro(Z2, X)))
+
+                        regla 2 implica resolver ancestro(Z3, X), padre(Z2, Z3)
+                        ancestro(Z3, X), padre(Z2, Z3), padre(Z, Z2), padre(juan, Z)
+                            ancestro(Z3, X)
+                                regla 1 resuelve Z3 = X
+                                ancestro(X, X), padre(Z2, X), padre(Z, Z2), padre(juan, Z)
+                                    como la base de conocimiento no tiene valores para hacer verdadero esta formula, falla y hace backtracking.
+
+                                regla 2 ...
+                                    y asi se sigue infinitamente
+*/
+
+%  --- VIII ---
+% el problema fue el llamado recursivo con 2 variables libres. Tratemos de evitar esto.
+
+%ancestro(X, X).
+%anestro(X, Y) :- descendiente(Y, X).
+
+% 
+
+ancestro(X, Y) :- padre(X, Y).
+ancestro(X, Y) :- padre(X, Z), ancestro(Z, Y).
+
+/*
+padre(X, Z), ancestro(Z, Y). 
+    padre(X, Z), padre(Z, Y).
+
+    el segundo termino de padre(...) corta los posibles llamados recursivos a solo aquellos con Z2 que sean hijos de Z
+    padre(X, Z), padre(Z, Z2), ancestro(Z2, Y) 
+*/
+
+/*===== Ejercicio 2=====*/
+
+vecino(X, Y, [_|Ls]) :- vecino(X, Y, Ls).
+vecino(X, Y, [X|[Y|_]]).
+%  --- I ---
+/*
+?- vecino(5, Y, [5, 6, 5, 3]).
+│
+├── [R1: vecino(X1, Y1, [X1, Y1 | Ls1])]
+│     Unificación: {X1 := 5, Y1 := Y, 5 := 5, 6 := Y, Ls1 := [5, 3]} => Y = 6
+│     ÉXITO (Solución 1: Y = 6)
+│
+└── [R2: vecino(X2, Y2, [W2 | Ls2]) :- vecino(X2, Y2, Ls2)]
+      Unificación: {X2 := 5, Y2 := Y, W2 := 5, Ls2 := [6, 5, 3]}
+      Meta: ?- vecino(5, Y, [6, 5, 3]).
+      │
+      ├── [R1: vecino(X3, Y3, [X3, Y3 | Ls3])]
+      │     Unificación: {X3 := 5, Y3 := Y, X3 := 6, ...}
+      │     Intenta 5 = 6 (Clash de constantes)
+      │     ──────────────────────────────────► FALLA
+      │
+      └── [R2: vecino(X4, Y4, [W4 | Ls4]) :- vecino(X4, Y4, Ls4)]
+            Unificación: {X4 := 5, Y4 := Y, W4 := 6, Ls4 := [5, 3]}
+            Meta: ?- vecino(5, Y, [5, 3]).
+            │
+            ├── [R1: vecino(X5, Y5, [X5, Y5 | Ls5])]
+            │     Unificación: {X5 := 5, Y5 := Y, 5 := 5, 3 := Y, Ls5 := []}
+            │     => Y = 3
+            │     ────────────────────────────► ÉXITO (Solución 2: Y = 3)
+            │
+            └── [R2: vecino(X6, Y6, [W6 | Ls6]) :- vecino(X6, Y6, Ls6)]
+                  Unificación: {X6 := 5, Y6 := Y, W6 := 5, Ls6 := [3]}
+                  Meta: ?- vecino(5, Y, [3]).
+                  │
+                  ├── [R1: vecino(X7, Y7, [X7, Y7 | Ls7])]
+                  │     Unificación de [3] con [X7, Y7 | Ls7]
+                  │     Falla: una lista de 1 elemento no unifica con [_, _ | _]
+                  │     ──────────────────────► FALLA
+                  │
+                  └── [R2: vecino(X8, Y8, [W8 | Ls8]) :- vecino(X8, Y8, Ls8)]
+                        Unificación: {X8 := 5, Y8 := Y, W8 := 3, Ls8 := []}
+                        Meta: ?- vecino(5, Y, []).
+                        │
+                        ├── [R1: [X9, Y9 | _] = []] ──► FALLA
+                        └── [R2: [_ | _] = []]      ──► FALLA
+
+*/
+
+%  --- II ---
+% son los mismos resultados pero con el orden invertido. Pero como prolog en este caso exploró todas las posibles caminos, no devuelve false. (En la anterior, como prolog es lazy, al hacer ; sobre la lista [5,3] para probar la segunda regla, trata de resolver con [3] y [] y como no encuentra solución devuelve false).
+
+
+/*===== Ejercicio 3=====*/
+
+natural(0).
+natural(suc(X)) :- natural(X).
+
+/*
+menorOIgual(X, suc(Y)) :- menorOIgual(X, Y).
+menorOIgual(X,X) :- natural(X).
+*/
+
+%  --- I ---
+% La consulta busca todos los valores que sean menorOIgual a 0. Como en las definiciones tenemos el caso recursivo primero, se unificará X con suc(Y). Por la definición, ahora debe resolver menorOIgual(X, Y) siendo Y una variable libre nueva. Entra a la primera definición y unifica Y con suc(Y1) siendo Y1 una variable libre fresca. Así entra aun bucle infinito.
+
+%  --- II ---
+/* Cuando una de las ramas que recorre prolog es infinita. Esto puede ocurrir por el orden de las reglas y la forma que tiene prolog de resolverlas (izq a der, arriba a abajo). Los motivos entonces son
+1. No se consumen las variables instanciadas
+2. Las reglas recursivas están antes que los casos base
+3. Un subojetivo unifica indefinidamente sobre variables libres frescas. Se genera un término de tamaño infinito (X = suc(Y) con X e Y variables libres para este caso) sin condiciones que hagan fallar al término.
+*/
+
+%  --- III ---
+
+% En esta solución se consume la variable instanciada X, se tiene el caso base primero, y por lo tanto en cada generación de término nuevo a resolver se puede obtener un valor por la primer regla.
+menorOIgual(0,X) :- natural(X).
+menorOIgual(suc(X), suc(Y)) :- menorOIgual(X, Y).
+
+/*
+
+106 ?- menorOIgual(0, suc(0)).
+true.
+
+107 ?- menorOIgual(suc(0), suc(0)).
+true.
+
+108 ?- menorOIgual(suc(suc(0)), suc(0)).
+false.
+
+109 ?- menorOIgual(0, X).
+X = 0 ;
+X = suc(0) ;
+X = suc(suc(0)) ;
+X = suc(suc(suc(0))) 
+*/
+
+
+/*===== Ejercicio 4=====*/
+
+juntar([], L, L).
+juntar([X | L1], L2, [X | L3]) :- juntar(L1, L2, L3).
+
+/*===== Ejercicio 5=====*/
+
+%  --- I ---
+
+last(L, U) :- juntar(_, [U], L).
+
+%  --- II ---
+reverse([], []). 
+reverse([X | L1 ], R) :- reverse(L1, R1), juntar(R1, [X], R).
+
+%  --- III ---
+
+prefijo(P, L) :- juntar(P, _, L).
+
+%  --- IV ---
+
+sufijo(S, L) :- juntar(_, S, L).
+
+%  --- V ---
+
+%sublista(S, L) :- prefijo(L1, L), sufijo(S, L1).
+sublista(S, L) :- juntar(P, _, L), juntar(_, S, P).
+
+
+%  --- VI ---
+
+pertenece(X, L) :- juntar(_, [X | _], L).
+
+/*===== Ejercicio 6=====*/
+
+aplanar(X, [X]) :-
+    X \= [],
+    X \= [_ | _].
+aplanar([], []).
+aplanar([X | L1 ], Y) :- 
+    aplanar(X, Y1), 
+    aplanar(L1, Y2), 
+    juntar(Y1, Y2, Y).
+    
+    
+/*===== Ejercicio 7=====*/
+
+%  --- I ---
+interseccion([], _, []).
+
+% Pertenece a L2 y no está repetido en el resto de L1 -> se incluye en L3
+interseccion([X | L1], L2, [X | L3]) :- 
+    member(X, L2), 
+    not(member(X, L1)),
+    interseccion(L1, L2, L3).
+% Pertenece a L2 pero está duplicado más adelante en L1 -> se descarta esta ocurrencia
+interseccion([X | L1], L2, L3) :- 
+    member(X, L2), 
+    member(X, L1),
+    interseccion(L1, L2, L3).
+% No pertenece a L2 -> se descarta
+interseccion([X | L1], L2, L3) :- 
+    not(member(X, L2)),
+    interseccion(L1, L2, L3).
+
+% en esta solución hace recursión primero y luego va resolviendo los valores de N
+partir(0, L, [], L).
+partir(N, [X|XS], [X|L3], L2) :-
+    partir(N1, XS, L3, L2),
+    N is N1 + 1.
+
+%  --- II ---
+borrar([], _, []).
+borrar([X|XS], X, YS) :- 
+    borrar(XS, X, YS).
+borrar([Z|XS], X, [Z|YS]) :- 
+    X \= Z,
+    borrar(XS, X, YS).
+
+%  --- III ---
+sacarDuplicados([], []).
+sacarDuplicados([X|XS], [X | L2]) :- not(member(X, XS)), sacarDuplicados(XS, L2).
+sacarDuplicados([X|XS], L2) :- member(X, XS), sacarDuplicados(XS, L2).
+
+/*
+Otra forma
+
+sacarDuplicados([], []).
+sacarDuplicados([X|XS], [X|YS]) :- borrar(XS, X, SinX), sacarDuplicados(SinX, YS).
+
+
+*/
+
+%  --- IV ---
+permutacion([], []).
+permutacion(L, [X | P]) :-
+    append(Prefijo, [X | Sufijo], L),
+    append(Prefijo, Sufijo, RESTO),
+    permutacion(RESTO, P).
+
+%  --- V ---
+reparto(L, 1, [L]).
+reparto(L, N, [Prefijo | LListas2]) :-
+    N > 1,
+    N1 is N - 1,
+    append(Prefijo, Resto, L),
+    reparto(Resto, N1, LListas2).
+
+
+%  --- VI ---
+repartoSinVacias([], [[]]).
+repartoSinVacias(L, [Prefijo | LListas2]) :-
+    append(Prefijo, Resto, L),
+    Prefijo \= [],
+    repartoSinVacias(Resto, LListas2).
+
+
+/*===== Ejercicio 8===== (gemini) */
+% Subconjunto de elementos preservando el orden relativo
+subconjunto([], []).
+subconjunto([X | Xs], [X | Ys]) :-
+    subconjunto(Xs, Ys).
+subconjunto([_ | Xs], Ys) :-
+    subconjunto(Xs, Ys).
+
+% Suma de una lista de enteros
+sumatoria([], 0).
+sumatoria([X | Xs], S) :-
+    sumatoria(Xs, S1),
+    S is S1 + X.
+
+% Predicado principal
+parteQueSuma(L, S, P) :-
+    subconjunto(L, P),
+    P \= [],
+    sumatoria(P, S).
+
+/*===== Ejercicio 9=====*/
+desde(X,X).
+desde(X,Y) :- N is X+1, desde(N,Y).
+
+%  --- I ---
+% Por el término N is X+1, X debe de estar instanciado. Y puede ser libre +X, ?Y.
+
+%  --- II ---
+desdeReversible(X,Y) :- 
+    nonvar(Y),
+    Y >= X.
+desdeReversible(X,Y) :- 
+    var(Y),
+    desde(X,Y).
+
+
+/*===== Ejercicio 10===== gemini la segunda parte*/
+intercalar([], L2, L2).
+intercalar(L1, [], L1) :-
+    L1 \= [].
+intercalar([X | L1], [Y | L2], [X, Y | L3]) :-
+    intercalar(L1, L2, L3).
+
+/*
+- Modo intercalar(+L1, +L2, -L3): Es completamente determinístico y genera de forma directa la lista intercalada única.   
+- Modo intercalar(-L1, -L2, +L3): Es completamente reversible. Dada una lista L3, Prolog descompone de manera constructiva sus elementos en las posiciones pares e impares para reconstruir L1 y L2. Además, explora las particiones en las cuales una de las dos listas finalizó antes.   
+- Modo intercalar(-L1, -L2, -L3): Genera recursivamente todas las tuplas de listas posibles que cumplan la relación, aunque es un espacio infinito.
+- Modo intercalar(+L1, -L2, -L3): (equiv -L1, +L2, -L3) tira una solución con la primer regla, falla con la segunda, hace llamada recursiva con la 3ra regla hasta agotar L1. Cuando termina, unifica una ultima vez con la primer regla (por []) y finalmente falla con regla 2 y 3. Por lo tanto, son finitas soluciones.
+
+Como todos los predicados para las combinaciones de argumentos posibles son reversibles (se puede instanciar o no instanciar) entonces el predicado es completamente reversible.
+*/
+
+/*===== Ejercicio 11=====*/
+
+
+vacio(nil).
+
+raiz(bin(_, V, _), V).
+
+altura(nil, 0).
+altura(bin(IZQ, _, DER), N) :-
+    altura(IZQ, AlturaIzq),
+    altura(DER, AlturaDer),
+    N is max(AlturaIzq, AlturaDer) + 1.
+
+cantidadDeNodos(nil, 0).
+
+cantidadDeNodos(bin(Izq, _, Der), N) :-
+    cantidadDeNodos(Izq, N1),
+    cantidadDeNodos(Der, N2),
+    N is N1 + N2 + 1.
+
+/*===== Ejercicio 12=====*/
+
+%  --- I ---
+inorder(nil, []).
+inorder(bin(Izq, V, Der), L) :-
+    inorder(Izq, InorderIzq),
+    inorder(Der, InorderDer),
+    append(InorderIzq, [V | InorderDer], L).
+
+
+%  --- II ---
+
+arbolConInorder([], nil).
+arbolConInorder(L, bin(Izq, X, Der)) :-
+    append(L1, [X | L2], L),
+    arbolConInorder(L1, Izq),
+    arbolConInorder(L2, Der).
+
+%  --- III ---
+
+aBB(nil).
+aBB(Ab) :- inorder(Ab, L), listaOrdernada(L).
+
+listaOrdernada([]).
+listaOrdernada([_]).
+listaOrdernada([X1 | [X2 | XS]]) :- X1 =< X2, listaOrdernada([X2 | XS]).
+
+%  --- IV ---
+aBBInsertar(X, nil, bin(nil, X, nil)).
+aBBInsertar(X, bin(Izq, V, Der), bin(NuevoIzq, V, Der)) :-
+    X < V,
+    aBBInsertar(X, Izq, NuevoIzq).
+aBBInsertar(X, bin(Izq, V, Der), bin(Izq, V, NuevoDer)) :-
+    X > V,
+    aBBInsertar(X, Der, NuevoDer).
+% No permitimos valores repetidos en el árbol
+aBBInsertar(X, bin(Izq, X, Der), bin(Izq, X, Der)).
+
+/*
+- Es reversible con respecto a T2. Si se instancia, se chequeará si X insertado en T1 es T2.
+- X Y T1 (por V) no son reversibles ya que al ser usados en el operador lógico "<" y ">" se necesita ambos instanciados.
+*/
+
+/*===== Ejercicio 13=====*/
+% generate: un par de naturales, test: gcd es 1
+
+% En este caso el par (3, 2), por ejemplo, es igual al par (2, 3).
+% podemos generar todos los pares que sumen S (aumentando S en 1) y unificando X desde 1 hasta S-1, Y = S - X.
+
+coprimos(X, Y) :-
+    % generate:
+    % genera los numeros desde el 2 en adelante en S
+    desde(2, S),
+    % test:
+    % instancia X e Y para que sumen S
+    suman(S, X, Y), 
+    % se queda con aquellos pares coprimos.
+    1 is gcd(X, Y). 
+
+
+% instancia X e Y tal que cumpla S = X + Y.
+suman(S, X, Y) :-
+    % en X se instancias valores entre 1 y S.
+    entre(1, S, X), 
+    % instancia Y tal que Y = S - X. Con la restricción adicional Y >= 1 restringimos para que Y > 0.
+    Y is S - X, Y >= 1.
+
+% genera numeros entre el min y el max
+entre(Min, Max, Min):- Min =< Max.
+entre(Min, Max, X):- 
+    Min < Max,
+    Min1 is Min + 1,
+    entre(Min1, Max, X).
+
+% ejercicio 9
+/*desde(X, X).
+desde(X, Y) :-
+    X1 is X + 1,
+    desde(X1, Y).*/
+
+
+
+/*===== Ejercicio 14=====*/
+
+%  --- I ---
+cuadradoSemiMagico(0, []).
+cuadradoSemiMagico(N, XS) :-
+    N > 0,
+    desde(0, S),
+    generarListasSumen(S, N, N, XS).
+
+generarListasSumen(_, 0, _, []).
+generarListasSumen(S, CantidadListasAGenerar, TamanoLista,  [ZS | YS]) :-
+    CantidadListasAGenerar > 0,
+    N1 is CantidadListasAGenerar - 1,
+    generarListaSuma(S, TamanoLista, ZS),
+    generarListasSumen(S, N1, TamanoLista, YS).
+
+generarListaSuma(0, 0, []).
+generarListaSuma(S, Tamano, [X | XS]) :-
+    Tamano > 0,
+    Tamano1 is Tamano - 1,
+    between(0, S, X),
+    SResto is S - X,
+    generarListaSuma(SResto, Tamano1, XS).
+
+
+%  --- II ---
+% genero un cuadrado semi magico y luego testeo que sea magico.
+cuadradoMagico(0, []).
+cuadradoMagico(N, [X | XS]) :-
+    N > 0,
+    % generate
+    cuadradoSemiMagico(N, [X | XS]),
+    % test
+    sumaLista(X, S),
+    esCuadradoMagico(N, S, [X | XS]).
+
+% Todas las columnas suman S. Chequeo recursivo por el numero de columna.
+esCuadradoMagico(0, _, _).
+esCuadradoMagico(N, S, Matriz) :-
+    N > 0,
+    columnaSuma(N, Matriz, S),
+    N1 is N - 1,
+    esCuadradoMagico(N1, S, Matriz).
+
+% Recorre la lista y suma los valores.
+sumaLista([], 0).
+sumaLista([X | XS], N) :-
+    sumaLista(XS, N1),
+    N is N1 + X.
+
+% suma de una columna de una matriz. Tomo el n-esimo elemento de cada fila y las sumo.
+columnaSuma(_, [], 0).
+columnaSuma(N, [Fila | Filas], S) :-
+    elemento(N, Fila, NesimoElemLista),
+    columnaSuma(N, Filas, S1),
+    S is S1 + NesimoElemLista.
+
+% n-esimo elemento de una lista, por lo que 1 sería el primer elemento.
+elemento(1, [X | _], X).
+elemento(N, [_ | XS], NesimoElemLista) :-
+    N > 1,
+    N1 is N - 1,
+    elemento(N1, XS, NesimoElemLista).
+
+/*===== Ejercicio 16=====*/
+
+frutal(frutilla).
+frutal(banana).
+frutal(manzana).
+cremoso(banana).
+cremoso(americana).
+cremoso(frutilla).
+cremoso(dulceDeLeche).
+
+leGusta(X) :- frutal(X), cremoso(X).
+cucurucho(X,Y) :- leGusta(X), leGusta(Y).
+
+%  --- I ---
+/*
+cucurucho(X, Y) :- leGusta(X), leGusta(Y).
+    leGusta(X) :- frutal(X), cremoso(X)).
+        frutal(X) 
+            unifica frutal(X) con frutal(frutilla) -> X := frutilla
+                cremoso(frutilla) tiene exito
+                
+                leGusta(Y) :- frutal(Y), cremoso(Y).
+                    frutal(Y) 
+                        unifica frutal(Y) con frutal(frutilla) -> Y := frutilla
+                        cremoso(frutilla) tiene exito.
+                            Solución 1: X := frutilla, Y := frutilla.
+
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(banana) -> Y := banana
+                        cremoso(banana) tiene exito
+                            Solucion 2: X := frutilla, Y := banana
+                    
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(manzana) -> Y := manzana
+                        cremoso(manzana) falla
+                
+
+            unifica frutal(X) con frutal(banana) -> X := banana
+                cremos(banana) tiene exito
+                
+                leGusta(Y) :- frutal(Y), cremoso(Y).
+                    frutal(Y) 
+                        unifica frutal(Y) con frutal(frutilla) -> Y := frutilla
+                        cremoso(frutilla) tiene exito.
+                            Solución 4: X := banana, Y := frutilla.
+
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(banana) -> Y := banana
+                        cremoso(banana) tiene exito
+                            Solucion 5: X := banana, Y := banana
+                    
+                    frutal(Y)
+                        unifica frutal(Y) con frutal(manzana) -> Y := manzana
+                        cremoso(manzana) falla
+
+            unifica frutal(X) con frutal(manzana) -> X := manzana
+                cremos(manzana) falla
+        falla
+    falla
+falla
+*/
+
+%  --- II ---
+/*
+El operador corte hace 2 cosas:
+1. fija los valores unificados sobre los terminos a la izquierda, podando el backtracking de los subojetivos.
+2. descarta las reglas restantes del predicado que aun no se evaluaron, podando más el árbol.
+
+leGusta(X) :- !, frutal(X), cremoso(X).
+    Como es la unica regla de leGusta y no hay reglas a la izquierda del !, se tiene el mismo árbol de búsqueda. Si huviera otras reglas, las podaría.
+
+leGusta(X) :- frutal(X), !, cremoso(X).
+    Se obtiene la primer instancia de la base de conocimientos que unifique con frutal(X) y se poda el resto de alternativas y reglas para leGusta()). Si esa instancia también es cremosa, se tiene exito y se devuelve la unica solución (unica justamente por la poda). Si no es cremosa, se falla.
+
+leGusta(X) :- frutal(X), cremoso(X), !.
+    Con este corte obtenemos el primer X que sea frutal y cremoso. Luego de encontrarlo, el algoritmo no buscará más ya que el ! podará el resto de ramas.
+
+cucurucho(X, Y) :- !, leGusta(X), leGusta(Y).
+    poda cualquier otra regla alternativa de cucurucho. Como no hay, el resultado será identico al punto I.
+
+ cucurucho(X, Y) :- leGusta(X), !, leGusta(Y).
+    fija el primer valor que unifique con X, luego poda alternativas de reglas de cucurucho (no las hay en este caso) y poda todo otro valor para X. 
+    Luego resuelve el subojetivo leGusta(Y). Podría fallar si para dicho X encontrado no hay una instancia de Y que satisfaga leGusta(X), leGusta(Y).
+    X = frutilla, Y = frutilla; X = frutilla, Y = banana
+
+cucurucho(X, Y) :- leGusta(X), leGusta(Y), !).
+    Busca la primer instancia de X e Y que satisfaga leGusta(X), leGusta(Y) y luego las fija, cortando otras posibles instancias. Además también corta la busqueda con otras posibles reglas definidas para cucurucho (en este caso no hay).
+    X = frutilla, Y = frutilla
+*/
+
+/*===== Ejercicio 17=====*/
+
+%  --- I ---
+/*
+el meta predicado not(P) falla si P tiene exito y tiene exito si P falla.
+Sirve para verficar si con la base de conocimientos podemos probar P.
+
+si not(P) verdadero no demuestra que P es falso, sino que con la base de conocimientos no se puede demostrar P.
+
+?- P(Y), not(Q(Y))
+
+Buscar las instancias Y que satisfagan P tales que no sirvan para probar Q.
+
+exists Y : P(Y) and not(Q(Y))
+
+*/
+
+%  --- II ---
+/*
+?- not(Q(Y)), P(Y)
+
+Primero se buscará un Y que satisfaga Q(Y). Si se encuentra not(Q(Y)) falla. Por lo tanto si existe un c que satisfaga Q (Q(c)), entocnes el predicado es siempre falso.
+Luego si no existe ningun valor que satisfaga Q, el not(Q(Y)) tiene exito y se termina listando todos los valores que cumplan P(Y).
+
+(not(exists Y : Q(Y))) and P(Y) 
+
+Se pierde la "propiedad" de filtro que había en I (generaba Y que cumplan P y luego se verificaba que no cumpla Q). Aca se tiene exito si no existe instancia que satisfaga Q y se tiene exito con las instancias que satisfagan P.
+
+*/
+
+%  --- III ---
+
+/*
+
+P(Y) and not(P(Z) and Z \= Y). 
+
+unicoP(Y) :-
+    P(Y),
+    not((P(Z), Z \= Y)).
+
+*/
+
+/*===== Ejercicio 18=====*/
+% usando la idea del ej 17 III, generamos todos los posibles cortes y nos quedamos con aquellos que no tengan un corte menor
+
+corte(L, L1, L2, Diff):-
+    append(L1, L2, L),
+    sumaLista(L1, S1),
+    sumaLista(L2, S2),
+    Diff is abs(S1 - S2).
+
+corteMasParejo(L, L1, L2) :-
+    corte(L, L1, L2, Diff),
+    not((corte(L, _, _, Diff1) , Diff1 < Diff)).
+
+
+/*===== Ejercicio 20=====*/
+
+proximoNumPoderoso(N, Y):-
+    Inicio is N + 1,
+    desde(Inicio, Y),
+    not(noCondicionNumPoderoso(Y)),
+    !. % solo pide el proximo. Al encontrarlo ya cortamos el resto del arbol de busqueda.
+
+noCondicionNumPoderoso(Y):-
+    between(2, Y, N),
+    0 =:= Y mod N,
+
+    esPrimo(N),
+    PrimoCuadrado is N * N,
+    0 =\= Y mod PrimoCuadrado.
+
+esPrimo(P):-
+    P > 1,
+    not(noEsPrimo(P)).
+
+noEsPrimo(P) :-
+    P > 1,
+    P1 is P - 1,
+    between(2, P1, N),
+    0 =:= P mod N.
+
+
+/*===== Ejercicio 22=====*/
+
+esNodo(G, X).
+esArista(G, X, Y).
+
+%  --- I ---
+
+caminoSimple(G, D, H, L) :-    
+    esNodo(G, D),
+    esNodo(G, H),
+    generarCaminoSimple(G, D, H, [D], L).
+
+% +G, +D, +H, +L1, ?L2
+generarCaminoSimple(_, H, H, _, [H]).
+generarCaminoSimple(G, Actual, H, Visitados, [Actual | L2]) :-
+    Actual \= H, % para no tener soluciones repetidas
+    esArista(G, Actual, Siguiente),
+    not(pertenece(Siguiente, Visitados)),
+    generarCaminoSimple(G, Siguiente, H, [Siguiente | Visitados], L2).
+
+%  --- II ---
+% con estrategia generate and test
+caminoHamiltoniano(G, L) :-
+    % generar todos los nodos y tomar de a pares
+    esNodo(G, A),
+    esNodo(G, B), % si el grafo es de un solo nodo, B unifica con A y encuentra la solución.
+    caminoSimple(G, A, B, L), 
+    % testear que L tenga todos los nodos
+    not(noEsCaminoHamiltoneano(G, L)).
+
+noEsCaminoHamiltoneano(G, L) :-
+    esNodo(G, A),
+    not(pertenece(A, L)).
+
+%  --- III ---
+esConexo(G) :-
+    not(noEsConexo(G)).
+
+noEsConexo(G) :-
+    esNodo(G, A),
+    esNodo(G, B),
+    not(caminoSimple(G, A, B, _)).
+
+/*
+esConexo(G) :-
+    not((esNodo(G, A), esNodo(G, B), not(caminoSimple(G, A, B, _))))
+*/
+
+%  --- IV ---
+esEstrella(G) :-
+    esConexo(G),
+    esNodo(G, Centro),
+    % no es centro si hay una arista que sus extremos no es el centro.
+    not((esArista(G, A, B), A \= Centro, B \= Centro)).
+
+
+/*===== Ejercicio 23=====*/
+
+%  --- I ---
+arbol(A) :-
+    desde(0, N),
+    generarArbol(N, A).
+
+% Idea: ir generando los arboles con cantidad de nodos 0, 1, 2, ... etc.
+% Para N nodos debemos elegir una cantidad A de nodos para el subarbol Izq. El derecho quedara con N - A nodos.
+% el rango de A irá de 0 a N - 1 (restamos uno por el nodo actual).
+generarArbol(0, nil).
+generarArbol(N, bin(SubarbolIzq, _, SubarbolDer)) :-
+    N > 0,
+    TotalNodosParaSubarboles is N - 1,
+    between(0, TotalNodosParaSubarboles, CantIzq),
+    generarArbol(CantIzq, SubarbolIzq),
+
+    CantDer is TotalNodosParaSubarboles - CantIzq,
+    generarArbol(CantDer, SubarbolDer).
+    
+%  --- II ---
+nodosEn(nil, _).
+nodosEn(bin(SubarbolIzq, V, SubarbolDer), L) :-
+    member(V, L),
+    nodosEn(SubarbolIzq, L),
+    nodosEn(SubarbolDer, L).
+
+%  --- III (gemini)---
+% Caso base: el árbol vacío es válido para cualquier lista disponible
+sinRepEn(nil, _).
+
+% Caso recursivo:
+sinRepEn(bin(Izq, V, Der), L) :-
+    % 1. Extraemos un elemento para la raíz y obtenemos el resto:
+    select(V, L, Resto),
+    % 2. Particionamos el resto en dos conjuntos disjuntos:
+    particion(Resto, LIzq, LDer),
+    % 3. Cada subárbol consume exclusivamente su propia partición:
+    sinRepEn(Izq, LIzq),
+    sinRepEn(Der, LDer).
+
+% particion(+L, -L1, -L2) divide una lista en dos sublistas disjuntas
+particion([], [], []).
+particion([X | Xs], [X | L1], L2) :-
+    particion(Xs, L1, L2).
+particion([X | Xs], L1, [X | L2]) :-
+    particion(Xs, L1, L2).
