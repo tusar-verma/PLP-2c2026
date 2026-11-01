@@ -56,7 +56,6 @@ test(tableroConPosiciónLiberada, [nondet]) :-
     tableroConPosiciónLiberada([[rojo,azul],[verde,rojo]], (2,1), T),
     T =@= [[rojo,azul],[libre,rojo]].
 
-/*
 % Ejercicio 4.b: tableroConPosicionesLiberadas
 
 test(tableroConPosicionesLiberadas, [nondet]) :-
@@ -106,14 +105,15 @@ test(ocupadasEnLíneaRecta, [nondet]) :-
     ocupadasEnLíneaRecta(T, (2,2), Os),
     Os =@= [].
 
+/*
 % Ejercicio 5.a: jugarPosición
 
 test(jugarPosición, [nondet]) :-
     tablero(1, T),
     jugarPosición(T, (1,2), TR),
     TR =@= [
-      [libre, libre, azul,  rojo],
-      [azul,  libre, azul,  rojo],
+        [libre, libre, azul,  rojo],
+        [azul,  libre, azul,  rojo],
       [verde, libre, azul,  verde],
       [libre, libre, libre, rojo]
     ].

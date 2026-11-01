@@ -57,7 +57,7 @@ Sobre la reversibilidad:
         El primer length unifica con M: [Lista] y Filas: 1, con Lista libre.
           Al ir al segundo length(Lista, Columnas), unifica Lista: [] y columna 0. Al volver a coordenadaEnRango falla y hace backtracking 
           unifica Lista: [_] y Columnas 1. Vuelve a coordenadaEnRango, si la coordenada (X, Y) tiene X=1 e Y >= 1 entonces tiene exito, sino falla. 
-          Al pedir sucesivamente más resultados se generan matrices de 1 sola fila y N columnas, con N > Y, siendo N la cantidad de veces que se pidió una respuesta. 
+          Al pedir sucesivamente más resultados se generan matrices de 1 sola fila y N columnas, con N > Y, siendo N la cantidad de veces que se pidió una respuesta.   
 */
 
 % ----------------
@@ -99,7 +99,21 @@ color(T, Color, Coordenada) :-
 
 % tableroConPosiciónLiberada(+Tablero, +Coordenada, -TableroLiberado)
 % Precondición: esMatriz(Tablero), coordenadaEnRango(Tablero, Coordenada), not(libre(Tablero, Coordenada)).
-tableroConPosiciónLiberada(_, _, _) :- completar("Ejercicio 4.a").
+
+tableroConPosiciónLiberada([Fila | RestoFilas], (X, Y), [Fila | RestoFilasLiberado]) :-
+  X > 1,
+  X1 is X - 1,
+  tableroConPosiciónLiberada(RestoFilas, (X1, Y), RestoFilasLiberado).
+tableroConPosiciónLiberada([Fila | RestoFilas], (X, Y), [FilaResultante | RestoFilas]) :-
+  X == 1,
+  liberarPosicionDeFila(Y, Fila, FilaResultante).
+
+liberarPosicionDeFila(1, [_ | Cola], [libre | Cola]).
+liberarPosicionDeFila(Y, [Cabeza | Cola], [Cabeza | ColaConPosLiberada]) :-
+  Y > 1,
+  Y1 is Y - 1,
+  liberarPosicionDeFila(Y1, Cola, ColaConPosLiberada).
+
 
 % ----------------
 % Ejercicio 4.b)
@@ -108,7 +122,11 @@ tableroConPosiciónLiberada(_, _, _) :- completar("Ejercicio 4.a").
 % tableroConPosicionesLiberadas(+Tablero, +Posiciones, -TableroLiberado)
 % Precondición: esMatriz(Tablero).
 % Precondición: para cada Coordenada en Posiciones: coordenadaEnRango(Tablero, Coordenada), not(libre(Tablero, Coordenada)).
-tableroConPosicionesLiberadas(_, _, _) :- completar("Ejercicio 4.b").
+
+tableroConPosicionesLiberadas(Tablero, [], Tablero).
+tableroConPosicionesLiberadas(Tablero, [Posicion | RestoPosiciones], TableroConElRestoPosicionesLiberadas) :- 
+  tableroConPosiciónLiberada(Tablero, Posicion, TableroConPosLiberada),
+  tableroConPosicionesLiberadas(TableroConPosLiberada, RestoPosiciones, TableroConElRestoPosicionesLiberadas).
 
 % ----------------
 % Operaciones sobre coordenadas.
