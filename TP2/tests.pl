@@ -105,27 +105,27 @@ test(ocupadasEnLíneaRecta, [nondet]) :-
     ocupadasEnLíneaRecta(T, (2,2), Os),
     Os =@= [].
 
-/*
 % Ejercicio 5.a: jugarPosición
 
+/*
 test(jugarPosición, [nondet]) :-
     tablero(1, T),
     jugarPosición(T, (1,2), TR),
     TR =@= [
         [libre, libre, azul,  rojo],
         [azul,  libre, azul,  rojo],
-      [verde, libre, azul,  verde],
-      [libre, libre, libre, rojo]
-    ].
-
-test(jugarPosición, [nondet]) :-
-    % empate: se liberan las vecinas de ambos colores
-    not(jugarPosición([[rojo,libre,azul]], (1,2), _)).
-
-% Ejercicio 5.b: jugarPosiciones
-
-test(jugarPosiciones, [nondet]) :-
-    tableroChico(T),
+        [verde, libre, azul,  verde],
+        [libre, libre, libre, rojo]
+        ].
+    
+    test(jugarPosición, [nondet]) :-
+        % empate: se liberan las vecinas de ambos colores
+        not(jugarPosición([[rojo,libre,azul]], (1,2), _)).
+    
+    % Ejercicio 5.b: jugarPosiciones
+    
+    test(jugarPosiciones, [nondet]) :-
+        tableroChico(T),
     jugarPosiciones(T, [], TR),
     TR =@= T.
 

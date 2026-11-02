@@ -40,25 +40,35 @@ tamaño([Lista | RestoListas], Filas, Columnas) :-
 
 % coordenadaEnRango(+Matriz, +Coordenada)
 % Precondición: esMatriz(Matriz)
+
+
+/*
 coordenadaEnRango(Matriz, (X, Y)) :- 
   tamaño(Matriz, Filas, Columnas),
   X > 0,
   Y > 0,
   Filas >= X,
   Columnas >= Y.
-
-/*
 Sobre la reversibilidad: 
-  los operadores aritmeticso > y >= requieren que ambos lados esten instanciados. Por lo tanto, el segundo argumento no es reversible.
-  Matriz no es reversible: 
-    Al tratar de unificar Matriz, entra al subojectivo tamaño
-      Usando la primer regla, unifica Matriz con [], si fila: 0 y columna 0. Al volver, no satisface la regla 2 de coordenadaEnRango y hace backtracking.
-      Ahora usa la regla 2 de tamaño.
-        El primer length unifica con M: [Lista] y Filas: 1, con Lista libre.
-          Al ir al segundo length(Lista, Columnas), unifica Lista: [] y columna 0. Al volver a coordenadaEnRango falla y hace backtracking 
-          unifica Lista: [_] y Columnas 1. Vuelve a coordenadaEnRango, si la coordenada (X, Y) tiene X=1 e Y >= 1 entonces tiene exito, sino falla. 
-          Al pedir sucesivamente más resultados se generan matrices de 1 sola fila y N columnas, con N > Y, siendo N la cantidad de veces que se pidió una respuesta.   
+los operadores aritmeticso > y >= requieren que ambos lados esten instanciados. Por lo tanto, el segundo argumento no es reversible.
+Matriz no es reversible: 
+Al tratar de unificar Matriz, entra al subojectivo tamaño
+Usando la primer regla, unifica Matriz con [], si fila: 0 y columna 0. Al volver, no satisface la regla 2 de coordenadaEnRango y hace backtracking.
+Ahora usa la regla 2 de tamaño.
+El primer length unifica con M: [Lista] y Filas: 1, con Lista libre.
+Al ir al segundo length(Lista, Columnas), unifica Lista: [] y columna 0. Al volver a coordenadaEnRango falla y hace backtracking 
+unifica Lista: [_] y Columnas 1. Vuelve a coordenadaEnRango, si la coordenada (X, Y) tiene X=1 e Y >= 1 entonces tiene exito, sino falla. 
+Al pedir sucesivamente más resultados se generan matrices de 1 sola fila y N columnas, con N > Y, siendo N la cantidad de veces que se pidió una respuesta.   
 */
+
+coordenadaEnRango(Matriz, (X, Y)) :- 
+  tamaño(Matriz, Filas, Columnas),
+  between(1, Filas, X),
+  between(1, Columnas, Y),
+  Filas >= X,
+  Columnas >= Y.
+
+% Con esta implementación ahora (X, Y) son reversibles.
 
 % ----------------
 % Observadores de tablero.
