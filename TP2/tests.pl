@@ -107,7 +107,6 @@ test(ocupadasEnLíneaRecta, [nondet]) :-
 
 % Ejercicio 5.a: jugarPosición
 
-/*
 test(jugarPosición, [nondet]) :-
     tablero(1, T),
     jugarPosición(T, (1,2), TR),
@@ -126,37 +125,38 @@ test(jugarPosición, [nondet]) :-
     
     test(jugarPosiciones, [nondet]) :-
         tableroChico(T),
-    jugarPosiciones(T, [], TR),
-    TR =@= T.
-
-test(jugarPosiciones, [nondet]) :-
-    tableroChico(T),
-    jugarPosiciones(T, [(1,2),(3,2)], TR),
-    TR =@= [[libre,libre,libre],[libre,libre,libre],[libre,libre,libre]].
-
-% jugarNaive
-
-test(jugarNaive, [nondet]) :-
-    tablero(3, T),
-    jugarNaive(T, TF),
-    TF =@= T.
-
-test(jugarNaive, [nondet]) :-
-    jugarNaive([[rojo,libre,rojo]], TF),
-    TF =@= [[libre,libre,libre]].
-
-test(jugarNaive, [nondet]) :-
-    tableroChico(T),
-    jugarNaive(T, [[libre,libre,libre],[libre,libre,libre],[libre,libre,libre]]).
-
-% Ejercicio 6.a: jugadasNaive
-
-test(jugadasNaive, [nondet]) :-
-    tablero(3, T),
-    jugadasNaive(T, Js),
-    Js =@= [].
-
-test(jugadasNaive, [nondet]) :-
+        jugarPosiciones(T, [], TR),
+        TR =@= T.
+    
+    test(jugarPosiciones, [nondet]) :-
+        tableroChico(T),
+        jugarPosiciones(T, [(1,2),(3,2)], TR),
+        TR =@= [[libre,libre,libre],[libre,libre,libre],[libre,libre,libre]].
+    
+    % jugarNaive
+    
+    test(jugarNaive, [nondet]) :-
+        tablero(3, T),
+        jugarNaive(T, TF),
+        TF =@= T.
+    
+    test(jugarNaive, [nondet]) :-
+        jugarNaive([[rojo,libre,rojo]], TF),
+        TF =@= [[libre,libre,libre]].
+    
+    test(jugarNaive, [nondet]) :-
+        tableroChico(T),
+        jugarNaive(T, [[libre,libre,libre],[libre,libre,libre],[libre,libre,libre]]).
+    
+    /*
+    % Ejercicio 6.a: jugadasNaive
+    
+    test(jugadasNaive, [nondet]) :-
+        tablero(3, T),
+        jugadasNaive(T, Js),
+        Js =@= [].
+    
+    test(jugadasNaive, [nondet]) :-
     jugadasNaive([[rojo,libre,rojo]], Js),
     Js =@= [(1,2)].
 
