@@ -307,7 +307,12 @@ jugarNaive(T, TF) :-
 
 % jugadasNaive(+Tablero, -Jugadas)
 % Precondición: esMatriz(Tablero).
-jugadasNaive(_, _) :- completar("Ejercicio 6.b").
+jugadasNaive(T, []) :-
+  not(jugadaPosible(T, _)).
+jugadasNaive(T, [J | Js]) :-
+  jugadaPosible(T, J),
+  jugarPosición(T, J, TI),
+  jugadasNaive(TI, Js).
 
 % ----------------
 % Ejercicio 7.a)
@@ -316,7 +321,13 @@ jugadasNaive(_, _) :- completar("Ejercicio 6.b").
 % victoriaConJugadas(+Tablero, +Jugadas).
 % Precondición: esMatriz(Tablero).
 % Precondición: para cada Coordenada en Jugadas: coordenadaEnRango(Tablero, Coordenada).
-victoriaConJugadas(_, _) :- completar("Ejercicio 7.a").
+victoriaConJugadas(T, J) :-
+  jugarPosiciones(T, J, TF),
+  tableroVacio(TF).
+
+% tableroVacio(+Tablero)
+tableroVacio(T) :-
+  forall(coordenada(T, C), libre(T, C)).
 
 % ----------------
 % Ejercicio 7.b)
@@ -324,8 +335,9 @@ victoriaConJugadas(_, _) :- completar("Ejercicio 7.a").
 
 % juegoNaiveVictorioso(+Tablero, -Jugadas)
 % Precondición: esMatriz(Tablero).
-juegoNaiveVictorioso(_, _) :- completar("Ejercicio 7.b").
-
+juegoNaiveVictorioso(T, J) :-
+  jugadasNaive(T, J),
+  victoriaConJugadas(T, J).
 % ----------------
 % Ejercicio 7.c)
 % ----------------

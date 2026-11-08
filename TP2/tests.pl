@@ -148,7 +148,6 @@ test(jugarPosición, [nondet]) :-
         tableroChico(T),
         jugarNaive(T, [[libre,libre,libre],[libre,libre,libre],[libre,libre,libre]]).
     
-    /*
     % Ejercicio 6.a: jugadasNaive
     
     test(jugadasNaive, [nondet]) :-
@@ -157,33 +156,34 @@ test(jugarPosición, [nondet]) :-
         Js =@= [].
     
     test(jugadasNaive, [nondet]) :-
-    jugadasNaive([[rojo,libre,rojo]], Js),
-    Js =@= [(1,2)].
-
-test(jugadasNaive, [nondet]) :-
-    tableroChico(T),
-    jugadasNaive(T, [(3,2),(1,2)]).
-
-% Ejercicio 7.a: victoriaConJugadas
-
-test(victoriaConJugadas, [nondet]) :-
-    tableroChico(T),
-    victoriaConJugadas(T, [(1,2),(3,2)]).
-
-test(victoriaConJugadas, fail) :-
-    tableroChico(T),
-    victoriaConJugadas(T, [(1,2)]).
-
-% Ejercicio 7.b: juegoNaiveVictorioso
-
-test(juegoNaiveVictorioso, [nondet]) :-
-    tableroChico(T),
-    setof(Js, juegoNaiveVictorioso(T, Js), L),
-    L =@= [[(1,2),(3,2)],[(3,2),(1,2)]].
-
-test(juegoNaiveVictorioso, fail) :-
-    juegoNaiveVictorioso([[rojo,libre,azul,libre,rojo]], _).
-
+        jugadasNaive([[rojo,libre,rojo]], Js),
+        Js =@= [(1,2)].
+    
+    test(jugadasNaive, [nondet]) :-
+        tableroChico(T),
+        jugadasNaive(T, [(3,2),(1,2)]).
+    
+    % Ejercicio 7.a: victoriaConJugadas
+    
+    test(victoriaConJugadas, [nondet]) :-
+        tableroChico(T),
+        victoriaConJugadas(T, [(1,2),(3,2)]).
+    
+    test(victoriaConJugadas, fail) :-
+        tableroChico(T),
+        victoriaConJugadas(T, [(1,2)]).
+    
+    % Ejercicio 7.b: juegoNaiveVictorioso
+    
+    test(juegoNaiveVictorioso, [nondet]) :-
+        tableroChico(T),
+        setof(Js, juegoNaiveVictorioso(T, Js), L),
+        L =@= [[(1,2),(3,2)],[(3,2),(1,2)]].
+    
+    test(juegoNaiveVictorioso, fail) :-
+        juegoNaiveVictorioso([[rojo,libre,azul,libre,rojo]], _).
+    
+    /*
 % Ejercicio 7.c: mejorJuegoNaive
 
 test(mejorJuegoNaive, [nondet]) :-
