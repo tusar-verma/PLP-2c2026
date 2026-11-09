@@ -183,13 +183,13 @@ test(jugarPosición, [nondet]) :-
     test(juegoNaiveVictorioso, fail) :-
         juegoNaiveVictorioso([[rojo,libre,azul,libre,rojo]], _).
     
+    % Ejercicio 7.c: mejorJuegoNaive
+    
+    test(mejorJuegoNaive, [nondet]) :-
+        setof(Js, mejorJuegoNaive([[libre,rojo,libre],[rojo,libre,rojo]], Js), L),
+        L =@= [[(2,2)]].
+    
     /*
-% Ejercicio 7.c: mejorJuegoNaive
-
-test(mejorJuegoNaive, [nondet]) :-
-    setof(Js, mejorJuegoNaive([[libre,rojo,libre],[rojo,libre,rojo]], Js), L),
-    L =@= [[(2,2)]].
-
 % Ejercicio 8: tableroEnElQueNaiveGanaEmpezandoPor
 % Comentar para no incluir
 

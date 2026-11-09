@@ -55,7 +55,7 @@ Matriz no es reversible:
 Al tratar de unificar Matriz, entra al subojectivo tamaño
 Usando la primer regla, unifica Matriz con [], si fila: 0 y columna 0. Al volver, no satisface la regla 2 de coordenadaEnRango y hace backtracking.
 Ahora usa la regla 2 de tamaño.
-El primer length unifica con M: [Lista] y Filas: 1, con Lista libre.
+El primer length unifica con Matriz: [Lista] y Filas: 1, con Lista libre.
 Al ir al segundo length(Lista, Columnas), unifica Lista: [] y columna 0. Al volver a coordenadaEnRango falla y hace backtracking 
 unifica Lista: [_] y Columnas 1. Vuelve a coordenadaEnRango, si la coordenada (X, Y) tiene X=1 e Y >= 1 entonces tiene exito, sino falla. 
 Al pedir sucesivamente más resultados se generan matrices de 1 sola fila y N columnas, con N > Y, siendo N la cantidad de veces que se pidió una respuesta.   
@@ -64,11 +64,9 @@ Al pedir sucesivamente más resultados se generan matrices de 1 sola fila y N co
 coordenadaEnRango(Matriz, (X, Y)) :- 
   tamaño(Matriz, Filas, Columnas),
   between(1, Filas, X),
-  between(1, Columnas, Y),
-  Filas >= X,
-  Columnas >= Y.
+  between(1, Columnas, Y).
 
-% Con esta implementación ahora (X, Y) son reversibles.
+% Con esta implementación ahora (X, Y) son reversibles. (Matriz sigue sin ser reversible).
 
 % ----------------
 % Observadores de tablero.
@@ -287,8 +285,7 @@ jugarPosición(T, (I,J), TR) :-
 % Precondición: esMatriz(TableroInicial).
 % Precondición: para cada Coordenada en Jugadas: coordenadaEnRango(TableroInicial, Coordenada).
 jugarPosiciones(T, [], T).
-jugarPosiciones(T, JD, TR) :- 
-  [J | Js] = JD,
+jugarPosiciones(T, [J | Js] , TR) :- 
   jugarPosición(T, J, TI),
   jugarPosiciones(TI, Js, TR).
 
@@ -344,7 +341,10 @@ juegoNaiveVictorioso(T, J) :-
 
 % mejorJuegoNaive(+Tablero, -Jugadas)
 % Precondición: esMatriz(Tablero).
-mejorJuegoNaive(_, _) :- completar("Ejercicio 7.c").
+mejorJuegoNaive(T, J) :- 
+  juegoNaiveVictorioso(T, J),
+  length(J, N),
+  not((juegoNaiveVictorioso(T, J2), length(J2, N2), N2 < N)).
 
 % ----------------
 % Ejercicio 8 - OPCIONAL
